@@ -15,6 +15,8 @@ import TermsCondition from "./components/Student/TermsCondition";
 
 import ExamTimer from "./components/Student/Timer";
 import StartExam from "./components/Student/StartExam";
+import OngoingExams from "./components/Student/OngoingExams";
+import MissedExams from "./components/Student/MissedExams";
 
 
 function App() {
@@ -34,6 +36,8 @@ function App() {
             <Route path="/studentdashboard" element={<StudentDashBoard />} >
               <Route index element={<StudentBody />} />
               <Route path="upcomingExams" element={<UpcomingExams />} />
+              <Route path="ongoingExams" element={<OngoingExams />} />
+              <Route path="missedExams" element={<MissedExams/>} />
 
             </Route>
 

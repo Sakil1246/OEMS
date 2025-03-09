@@ -54,15 +54,17 @@ const CreateExam = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+  
     let newValue = value;
     if (name === "startTime") {
-      newValue = new Date(value).toISOString(); // Convert back to ISO before storing
+      const date = new Date(value);
+      newValue = date.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }); // Store in IST format
     }
-
+  
     setExamDetails((prev) => ({ ...prev, [name]: newValue }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
+  
 
   const handleNext = () => {
     const newErrors = {};

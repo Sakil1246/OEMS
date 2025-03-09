@@ -14,7 +14,7 @@ const StudentBody = () => {
   const [notifications, setNotifications] = useState([]);
   const [exams, setExams] = useState([]);
 
- 
+
 
   const Card = ({ title, icon, data, color, onClick }) => (
     <div
@@ -44,8 +44,8 @@ const StudentBody = () => {
 
       const ongoing = res.data.filter((exam) => {
         const now = new Date();
-        const startTime = new Date(exam.examDate); 
-        const endTime = new Date(exam.endTime);    
+        const startTime = new Date(exam.examDate);
+        const endTime = new Date(exam.endTime);
 
         return now >= startTime && now <= endTime && exam.department === studentDepartment;
       });
@@ -78,45 +78,77 @@ const StudentBody = () => {
       console.log(e)
     }
   }
-  return (
-    <div className=" min-h-screen flex flex-col bg-gray-950 items-center p-6">
-      {/* <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome</h1> */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-        <Card
-          title="Upcoming Exams"
-          icon={<FaClipboardList size={24} />}
-          data={`${upcomingExams} exams scheduled`}
-          color="bg-orange-500"
-          onClick={handleUpcoming}
-        />
-        <Card
-          title="Ongoing Exams"
-          icon={<FaPlayCircle size={24} />}
-          data={`${ongoingExams} exams live now`}
-          color="bg-blue-500"
-        />
-        <Card
-          title="Missed Exams"
-          icon={<RiErrorWarningFill size={24} />}
-          data={`${missedExams} exams you missed`}
-          color="bg-red-500"
-        />
-        <Card
-          title="Your Progress"
-          icon={<FaChartBar size={24} />}
-          data={`Average Score: ${progress?.averageScore || "N/A"}`}
-          color="bg-green-500"
-        />
-        <Card
-          title="Notifications"
-          description={`${notifications.length} new announcements`}
-          icon={<FaBell size={24} />}
-          color="bg-red-500"
-        />
+  const handleOngoing = async () => {
+     try{
+      const response = exams;
+      const ongoing = response.filter((exam) => {
+        const now = new Date();
+        const startTime = new Date(exam.examDate);
+        const endTime = new Date(exam.endTime);
 
+        return now >= startTime && now <= endTime && exam.department === studentDepartment;
+      });
+      navigate("/studentdashboard/ongoingExams", { state: ongoing });
+    } catch (e) {
+      console.log(e)
+
+    }
+  }
+
+  const handleMissed = async () => {
+    try {
+      const response = exams;
+      const missed = response.filter((exam) => {
+        const now = new Date();
+        const endTime = new Date(exam.endTime);
+        return now > endTime && exam.department === studentDepartment;
+      });
+      navigate("/studentdashboard/missedExams", { state: missed });
+    } catch (e) {
+      console.log(e)
+    }
+  }
+    return (
+      <div className=" min-h-screen flex flex-col bg-gray-950 items-center p-6">
+        {/* <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome</h1> */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+          <Card
+            title="Upcoming Exams"
+            icon={<FaClipboardList size={24} />}
+            data={`${upcomingExams} exams scheduled`}
+            color="bg-orange-500"
+            onClick={handleUpcoming}
+          />
+          <Card
+            title="Ongoing Exams"
+            icon={<FaPlayCircle size={24} />}
+            data={`${ongoingExams} exams live now`}
+            color="bg-blue-500"
+            onClick={handleOngoing}
+          />
+          <Card
+            title="Missed Exams"
+            icon={<RiErrorWarningFill size={24} />}
+            data={`${missedExams} exams you missed`}
+            color="bg-red-500"
+            onClick={handleMissed}
+          />
+          <Card
+            title="Your Progress"
+            icon={<FaChartBar size={24} />}
+            data={`Average Score: ${progress?.averageScore || "N/A"}`}
+            color="bg-green-500"
+          />
+          <Card
+            title="Notifications"
+            description={`${notifications.length} new announcements`}
+            icon={<FaBell size={24} />}
+            color="bg-red-500"
+          />
+
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
-export default StudentBody;
+  export default StudentBody;
