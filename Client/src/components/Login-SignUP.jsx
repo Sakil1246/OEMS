@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [role, setRole] = useState("student");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("sakil@gmail.com");
   const [password, setPassword] = useState("sakil123");
   const [rollNo, setRollNo] = useState("csb22018");
   const [otp, setOtp] = useState("");

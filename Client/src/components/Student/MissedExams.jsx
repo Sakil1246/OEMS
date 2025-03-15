@@ -77,6 +77,9 @@ const MissedExams = () => {
             
           />
         ))}
+        <button className="bg-blue-500 rounded-lg mt-6 text-gray-100 p-4"
+        onClick={()=>navigate(-1)}
+        >Back to Home page</button>
       </div>
      
     </div>
