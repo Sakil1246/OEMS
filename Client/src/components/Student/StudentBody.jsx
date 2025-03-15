@@ -138,12 +138,14 @@ const StudentBody = () => {
             icon={<FaChartBar size={24} />}
             data={`Average Score: ${progress?.averageScore || "N/A"}`}
             color="bg-green-500"
+            onClick={()=>navigate("/studentdashboard/progress")}
           />
           <Card
             title="Notifications"
             description={`${notifications.length} new announcements`}
             icon={<FaBell size={24} />}
             color="bg-red-500"
+            onClick={()=>navigate("/studentdashboard/notifications")}
           />
 
         </div>

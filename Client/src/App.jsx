@@ -17,6 +17,8 @@ import ExamTimer from "./components/Student/Timer";
 import StartExam from "./components/Student/StartExam";
 import OngoingExams from "./components/Student/OngoingExams";
 import MissedExams from "./components/Student/MissedExams";
+import Notifications from "./components/Student/Notifications";
+import Progress from "./components/Student/Progress";
 
 
 function App() {
@@ -38,6 +40,8 @@ function App() {
               <Route path="upcomingExams" element={<UpcomingExams />} />
               <Route path="ongoingExams" element={<OngoingExams />} />
               <Route path="missedExams" element={<MissedExams/>} />
+              <Route path="progress" element={<Progress />} />
+              <Route path="notifications" element={<Notifications/>} />
 
             </Route>
 
