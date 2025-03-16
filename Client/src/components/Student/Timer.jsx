@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Basic_URL } from "../../utils/constants";
+import { parse } from "date-fns";
 
 const ExamTimer = () => {
   const location = useLocation();
@@ -12,17 +13,19 @@ const ExamTimer = () => {
     return <h1 className="text-center text-red-500">No Exam Data Found!</h1>;
   }
 
-  const { examId } = response;
+  const { examId,duration } = response;
+  console.log(duration);
 
   const [questions, setQuestions] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const { data } = await axios.get(`${Basic_URL}student/exam/${examId}/questions`,{withCredentials:true});
-        setQuestions(data);  
+        const { data } = await axios.get(`${Basic_URL}student/exam/${examId}/questions`, {
+          withCredentials: true,
+        });
+        setQuestions(data);
       } catch (err) {
         console.log("Error fetching questions:", err);
       }
@@ -32,7 +35,7 @@ const ExamTimer = () => {
   }, [examId]);
 
   
-  const examDate = new Date(response.examDate);
+  const examDate = parse(response.examDate, "dd/MM/yyyy, hh:mm a", new Date());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,10 +48,9 @@ const ExamTimer = () => {
   const timeDiff = examDate - currentTime;
   const remainingTime = timeDiff > 0 ? new Date(timeDiff).toISOString().substr(11, 8) : "00:00:00";
 
-
   useEffect(() => {
     if (timeDiff <= 0) {
-      navigate("/examStart", { state: { questions } });  // Pass questions correctly
+      navigate("/examStart", { state: { questions,examId,duration } }); 
     }
   }, [timeDiff, navigate, questions]);
 

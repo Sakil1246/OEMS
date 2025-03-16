@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Basic_URL } from "../../utils/constants";
 import { useSelector } from "react-redux";
 import { RiErrorWarningFill } from "react-icons/ri";
-
+import {parse} from "date-fns"
 const StudentBody = () => {
   const [upcomingExams, setUpcomingExams] = useState(0);
   const [ongoingExams, setOngoingExams] = useState(0);
@@ -39,14 +39,18 @@ const StudentBody = () => {
 
       const res = await axios.get(Basic_URL + "student/exam/list", { withCredentials: true });
       setExams(res.data);
-      const upexam = res.data.filter((exam) => new Date(exam.examDate) > new Date() && exam.department === studentDepartment);
+      const upexam = res.data.filter((exam) => {
+        const examDate = parse(exam.examDate, "dd/MM/yyyy, hh:mm a", new Date());
+        return examDate > new Date() && exam.department === studentDepartment;
+      });
       setUpcomingExams(upexam.length);
 
       const ongoing = res.data.filter((exam) => {
         const now = new Date();
-        const startTime = new Date(exam.examDate);
-        const endTime = new Date(exam.endTime);
-
+  
+        const startTime = parse(exam.examDate, "dd/MM/yyyy, hh:mm a", new Date());
+        const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", new Date());
+  
         return now >= startTime && now <= endTime && exam.department === studentDepartment;
       });
       console.log(ongoing);
@@ -54,9 +58,13 @@ const StudentBody = () => {
 
       const missed = res.data.filter((exam) => {
         const now = new Date();
-        const endTime = new Date(exam.endTime);
+  
+       
+        const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", new Date());
+        
+  
         return now > endTime && exam.department === studentDepartment;
-      });
+      })
       setMissedExams(missed.length || 0);
     } catch (err) {
       console.error("Failed to fetch exam details: ", err);
@@ -71,7 +79,11 @@ const StudentBody = () => {
     try {
       const response = exams;
 
-      const upcoming = response.filter((exam) => new Date(exam.examDate) > new Date() && exam.department === studentDepartment);
+      const upcoming = response.filter((exam) => {
+        const examDate = parse(exam.examDate, "dd/MM/yyyy, hh:mm a", new Date());
+        return examDate > new Date() && exam.department === studentDepartment;
+      });
+  
 
       navigate("/studentdashboard/upcomingExams", { state: upcoming });
     } catch (e) {
@@ -79,35 +91,44 @@ const StudentBody = () => {
     }
   }
   const handleOngoing = async () => {
-     try{
+    try {
       const response = exams;
+  
       const ongoing = response.filter((exam) => {
         const now = new Date();
-        const startTime = new Date(exam.examDate);
-        const endTime = new Date(exam.endTime);
-
+  
+        const startTime = parse(exam.examDate, "dd/MM/yyyy, hh:mm a", new Date());
+        const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", new Date());
+  
         return now >= startTime && now <= endTime && exam.department === studentDepartment;
       });
+  
       navigate("/studentdashboard/ongoingExams", { state: ongoing });
     } catch (e) {
-      console.log(e)
-
+      console.log(e);
     }
-  }
+  };
 
   const handleMissed = async () => {
     try {
       const response = exams;
+  
       const missed = response.filter((exam) => {
         const now = new Date();
-        const endTime = new Date(exam.endTime);
+  
+       
+        const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", new Date());
+        console.log(endTime);
+  
         return now > endTime && exam.department === studentDepartment;
       });
+      console.log(missed);
+  
       navigate("/studentdashboard/missedExams", { state: missed });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }
+  };
     return (
       <div className=" min-h-screen flex flex-col bg-gray-950 items-center p-6">
         {/* <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome</h1> */}

@@ -49,7 +49,7 @@ function App() {
           }
           {student &&<Route path="termsCondition" element={<TermsCondition />} />}
           {student &&<Route path="timer" element={<ExamTimer />} />}
-          {<Route path="examStarts" element={<StartExam />} />}
+          {student &&<Route path="examStart" element={<StartExam />} />}
 
           {/* Nested Teacher Routes */}
           {teacher && <Route path="/teacherDashboard" element={<TeacherDashBoard />}>

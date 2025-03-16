@@ -4,7 +4,6 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 const UpcomingExams = () => {
   const location = useLocation();
   const response = location.state;
-   console.log(response);
   const navigate=useNavigate();
 
   if (response.length<=0) {
@@ -18,23 +17,8 @@ const UpcomingExams = () => {
     );
   }
 
-  // Convert date to Indian format (DD-MM-YYYY, HH:MM AM/PM)
-  const formatIndianDate = (dateString) => {
-    if (!dateString) return "Invalid Date";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
-
   
-  // Updated Card component
-  const Card = ({ title, icon, data, color,onClick}) => (
+  const Card = ({ title, icon,  color,onClick,date}) => (
     <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between  w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300 ">
      <div>
       <div className={`w-14 h-14 rounded-lg flex items-center justify-center text-white ${color}`}>
@@ -43,7 +27,7 @@ const UpcomingExams = () => {
       <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
       {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}
       <p className="text-gray-300 text-lg font-medium mt-2">
-        {"Date: " + (data ? formatIndianDate(data) : "Not Available")}
+        {"Date: " + date}
       </p>
     </div>
     <div>
@@ -62,10 +46,10 @@ const UpcomingExams = () => {
             key={exam._id}
             title={[exam.examName, exam.subjectName]}
             icon={<FaClipboardList />}
-            data={exam.examDate}
             color="bg-blue-500"
             onClick={()=>{navigate("/termsCondition",{state:exam})}
             }
+            date={exam.examDate}
           />
         ))}
       </div>

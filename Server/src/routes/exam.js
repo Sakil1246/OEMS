@@ -157,9 +157,9 @@ examRouter.get("/student/exam/:examId/questions", authStudent, async (req, res) 
 });
 
 
-examRouter.post("/student/exam/submit", authStudent, async (req, res) => {
+examRouter.post("/student/exam/submit/:examId", authStudent, async (req, res) => {
   try {
-    const { examId, answers } = req.body;
+    const answers= req.body;
     if (!Array.isArray(answers)) return res.status(400).json({ message: "Invalid answers format." });
 
     const answerDocs = answers.map(ans => ({
