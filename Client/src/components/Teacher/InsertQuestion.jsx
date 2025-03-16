@@ -166,6 +166,7 @@ const InsertQuestions = () => {
 
       alert("Exam created successfully!");
       resetForm();
+      //localStorage.removeItem(examDetails);
       navigate("/teacherDashboard");
     } catch (error) {
       if (error.response) {

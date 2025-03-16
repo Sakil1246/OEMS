@@ -69,14 +69,14 @@ examRouter.post("/teacher/exam/create", authTeacher, async (req, res) => {
    
     const savedQuestions = await Question.insertMany(questionsWithTeacher);
     const questionIds = savedQuestions.map(q => q._id); 
-    const startTimeIST = new Date(startTime).toISOString();
+    
 
     
     const newExam = new Exam({
       teacherId: req.teacher._id,
       semester: Number(semester),
       examName,
-      startTime: startTimeIST,
+      startTime,
       duration: Number(duration),
       subjectName,
       totalMarks: Number(totalMarks),

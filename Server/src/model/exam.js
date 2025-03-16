@@ -5,15 +5,16 @@ const examSchema = new mongoose.Schema({
   semester: { type: Number, required: true },
   examName: { type: String, required: true },
   subjectName: { type: String, required: true },
-  startTime: { 
-    type: Date, required: true, 
-    validate: {
-      validator: function(value) {
-        return value > new Date(); 
-      },
-      message: "Exam start time must be in the future."
-    }
-  },
+  // startTime: { 
+  //   type: Date, required: true, 
+  //   validate: {
+  //     validator: function(value) {
+  //       return value > new Date(); 
+  //     },
+  //     message: "Exam start time must be in the future."
+  //   }
+  // },
+  startTime:{type:String, required: true},
   totalMarks: { type: Number, required: true },
   passingMarks: { type: Number },
   department:{ type: String, required: true},
