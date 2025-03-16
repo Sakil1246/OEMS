@@ -1,5 +1,7 @@
-const express = require("express");
+
+
 const { authTeacher, authStudent } = require("../middlewares/auth");
+const express = require("express");
 const Exam = require("../model/exam");
 const Question = require("../model/question");
 const Answer = require("../model/answer");
@@ -9,7 +11,7 @@ const moment = require("moment-timezone");
 require("dotenv").config();
 
 const examRouter = express.Router();
-
+const { parse, format }= require ("date-fns");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -99,44 +101,49 @@ examRouter.post("/teacher/exam/create", authTeacher, async (req, res) => {
 
 
 
+
+
 examRouter.get("/student/exam/list", authStudent, async (req, res) => {
-  try{
+  try {
+    const exams = await Exam.find({})
+      .select("semester examName subjectName startTime duration totalMarks department _id teacherId")
+      .sort({ startTime: 1 });
 
-    const exams = await Exam.find({  })  
-    .select("semester examName subjectName startTime duration totalMarks department _id teacherId")  
-    .sort({ startTime: 1 });
-
-  
-    const examsList = exams.map(exam => {
+    const examsList = exams.map((exam) => {
       const now = new Date();
-      const startTime = new Date(exam.startTime);
+
+      // Parse startTime correctly if stored in "dd/MM/yyyy, hh:mm a" format
+      let startTime = new Date(exam.startTime);
+      if (typeof exam.startTime === "string") {
+        startTime = parse(exam.startTime, "dd/MM/yyyy, hh:mm a", new Date());
+      }
+
       const endTime = new Date(startTime.getTime() + exam.duration * 60000);
-    
-      // Convert both startTime & endTime to IST format
-      const startTimeIST = startTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-      const endTimeIST = endTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-    
+
+      // Convert to required format
+      const startTimeIST = format(startTime, "dd/MM/yyyy, hh:mm a");
+      const endTimeIST = format(endTime, "dd/MM/yyyy, hh:mm a");
+
       return {
         semester: exam.semester,
         examName: exam.examName,
         subjectName: exam.subjectName,
-        examDate: startTimeIST, 
+        examDate: startTimeIST,
         duration: exam.duration,
         department: exam.department,
         totalMarks: exam.totalMarks,
-        endTime: endTimeIST, 
+        endTime: endTimeIST,
         examId: exam._id,
         teacherId: exam.teacherId,
       };
     });
-    
 
-  
-  res.json(examsList);
-  }catch(err){
-      res.status(400).send("ERROR :"+err.message);
+    res.json(examsList);
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
   }
 });
+
 
 examRouter.get("/student/exam/:examId/questions", authStudent, async (req, res) => {
   try {
