@@ -34,7 +34,69 @@ const transporter = nodemailer.createTransport({
 //     console.log("Email sent: ", info.response);
 //   }
 // });
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+const otpStore = {};
+studentAuthRouter.post("/student/sendEmail", async (req, res) => {
+  try {
+    console.log(req.body)
+      const { rollNo } = req.body;
+      if (!rollNo) return res.status(400).json({ message: "Roll number is required" });
 
+      const emailhead = rollNo.toLowerCase();
+      const email = `${emailhead}@tezu.ac.in`;
+
+      
+      const otp = generateOTP();
+      otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // Store for 5 minutes
+
+      
+      const mailOptions = {
+          from: "sakilahmed345677@gmail.com",
+          to: email,
+          subject: "ExamZen OTP Verification",
+          text: `Your OTP is ${otp}. This OTP is valid for 5 minutes.`,
+      };
+
+      
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              console.error("Error sending email: ", error);
+              return res.status(500).json({ message: "Email failed to send" });
+          }
+
+          console.log("Email sent: ", info.response);
+          res.json({ message: "OTP sent successfully" });
+      });
+  } catch (error) {
+      console.error("Error: ", error.message);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
+studentAuthRouter.post("/student/verifyOTP", (req, res) => {
+  try {
+      const { email, otp } = req.body;
+      if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
+
+      const storedOTP = otpStore[email];
+
+      // Check if OTP exists and is still valid
+      if (!storedOTP || storedOTP.expiresAt < Date.now()) {
+          return res.status(400).json({ message: "OTP expired or invalid" });
+      }
+
+      if (storedOTP.otp !== otp) {
+          return res.status(400).json({ message: "Incorrect OTP" });
+      }
+
+      // OTP is correct, remove from storage
+      delete otpStore[email];
+
+      res.json({ message: "OTP verified successfully" });
+  } catch (error) {
+      console.error("Error verifying OTP: ", error.message);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
 studentAuthRouter.post("/student/signup", async (req, res) => {
   try {
       validateStudentSignupData(req);
@@ -60,27 +122,27 @@ studentAuthRouter.post("/student/signup", async (req, res) => {
       const token = newStudent.getJWT();
       res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
 
-      const emailhead = rollNo.toLowerCase();
-      const mailOptions = {
-          from: "sakilahmed345677@gmail.com",
-          to: emailhead + "@tezu.ac.in",
-          subject: "Hello from Sakil",
-          text: "Good Morning.",
-      };
+      // const emailhead = rollNo.toLowerCase();
+      // const mailOptions = {
+      //     from: "sakilahmed345677@gmail.com",
+      //     to: emailhead + "@tezu.ac.in",
+      //     subject: "Hello from Sakil",
+      //     text: "Good Morning.",
+      // };
 
-      // Send email first
-      transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-              console.error("Error sending email: ", error);
-              return res.status(500).json({ message: "Signup successful, but email failed to send", data: laddu });
-          }
+      // // Send email first
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //     if (error) {
+      //         console.error("Error sending email: ", error);
+      //         return res.status(500).json({ message: "Signup successful, but email failed to send", data: laddu });
+      //     }
 
-          console.log("Email sent: ", info.response);
-          res.json({
-              message: "New student signed up successfully! Email sent.",
-              data: laddu,
-          });
-      });
+      //     console.log("Email sent: ", info.response);
+      //     res.json({
+      //         message: "New student signed up successfully! Email sent.",
+      //         data: laddu,
+      //     });
+      // });
 
   } catch (err) {
       res.status(400).send("ERROR: " + err.message);

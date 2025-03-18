@@ -15,6 +15,8 @@ const StartExam = () => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [answeredQuestions, setAnsweredQuestions] = useState(new Set()); 
+  const [reviewedQuestions, setReviewedQuestions] = useState(new Set()); 
   const [timeLeft, setTimeLeft] = useState(duration * 60);
 
   useEffect(() => {
@@ -34,11 +36,38 @@ const StartExam = () => {
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
   };
 
+  const handleSaveAndNext = () => {
+    const questionId = newQuestions[currentQuestionIndex]._id;
+    setAnsweredQuestions((prev) => new Set([...prev, questionId])); 
+    setReviewedQuestions((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(questionId);
+      return newSet;
+    });
+    setCurrentQuestionIndex((prev) => Math.min(prev + 1, newQuestions.length - 1));
+  };
+
+  const handleReviewAndNext = () => {
+    const questionId = newQuestions[currentQuestionIndex]._id;
+    setReviewedQuestions((prev) => new Set([...prev, questionId])); 
+    setCurrentQuestionIndex((prev) => Math.min(prev + 1, newQuestions.length - 1));
+  };
+
   const handleSubmitExam = async () => {
     try {
-      await axios.post(`${Basic_URL}student/exam/submit/${examId}`, answers, {
+     
+      const formattedAnswers = Object.keys(answers).map((questionId) => {
+        return {
+          questionId: questionId,
+          answerText: typeof answers[questionId] === "string" ? answers[questionId] : null,
+          selectedOption: typeof answers[questionId] === "string" ? null : answers[questionId],
+        };
+      });
+  
+      await axios.post(`${Basic_URL}student/exam/submit/${examId}`, formattedAnswers, {
         withCredentials: true,
       });
+  
       alert("Exam submitted successfully!");
       navigate("/studentdashboard");
     } catch (e) {
@@ -46,6 +75,7 @@ const StartExam = () => {
       alert("Exam submission failed. Please try again.");
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 p-6">
@@ -57,29 +87,49 @@ const StartExam = () => {
           </span>
         </div>
 
+        
         <div className="flex gap-2 mt-4">
-          {newQuestions.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentQuestionIndex(index)}
-              className={`px-4 py-2 rounded-full ${
-                index === currentQuestionIndex
-                  ? "bg-blue-500 text-white"
-                  : answers[newQuestions[index]._id]
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-300"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          {newQuestions.map((_, index) => {
+            const questionId = newQuestions[index]._id;
+            let buttonColor = "bg-gray-200 text-black"; 
+            if (index === currentQuestionIndex) {
+              buttonColor = "bg-blue-500 text-white"; 
+            } else if (answeredQuestions.has(questionId)) {
+              buttonColor = "bg-green-500 text-white"; 
+            } else if (reviewedQuestions.has(questionId)) {
+              buttonColor = "bg-orange-500 text-white";
+            }
+
+            return (
+              <button
+                key={index}
+                onClick={() => setCurrentQuestionIndex(index)}
+                className={`px-4 py-2 rounded-full ${buttonColor}`}
+              >
+                {index + 1}
+              </button>
+            );
+          })}
         </div>
 
+       
         {newQuestions.length > 0 && (
           <div className="mt-4">
-            <p className="text-lg font-semibold">{`Q${currentQuestionIndex + 1}: ${newQuestions[currentQuestionIndex].questionText}`}</p>
-            <p className="text-sm text-gray-600">Marks: {newQuestions[currentQuestionIndex].marks}, Bloom's Level: {newQuestions[currentQuestionIndex].bloomLevel}</p>
+            <p className="text-lg text-gray-900 font-semibold">
+              {`Q${currentQuestionIndex + 1}: ${newQuestions[currentQuestionIndex].questionText}`}
+            </p>
 
+            
+            <div className="flex flex-col justify-end text-right">
+              <div className="text-sm text-gray-800">
+                Bloom's Level: {newQuestions[currentQuestionIndex].bloomLevel}
+              </div>
+              <div className="text-sm text-gray-800 ml-4">
+                Marks: {newQuestions[currentQuestionIndex].marks}
+              </div>
+            </div>
+
+           
             {newQuestions[currentQuestionIndex].questionImage && (
               <img
                 src={newQuestions[currentQuestionIndex].questionImage}
@@ -88,6 +138,7 @@ const StartExam = () => {
               />
             )}
 
+            
             {newQuestions[currentQuestionIndex].questionType === "MCQ" ? (
               <div className="mt-2">
                 {newQuestions[currentQuestionIndex].options.map((option, index) => (
@@ -115,6 +166,7 @@ const StartExam = () => {
           </div>
         )}
 
+        
         <div className="flex justify-between mt-6">
           <button
             disabled={currentQuestionIndex === 0}
@@ -123,31 +175,23 @@ const StartExam = () => {
           >
             Previous
           </button>
-          {currentQuestionIndex < newQuestions.length - 1 ? (
-            <button
-              disabled={!answers[newQuestions[currentQuestionIndex]._id]}
-              onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Save and Next
-            </button>
-          ) : (
-            <button
-              disabled={!answers[newQuestions[currentQuestionIndex]._id]}
-              onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Save
-            </button>
-          )}
+
           <button
-            onClick={() => setCurrentQuestionIndex(Math.min(currentQuestionIndex + 1, newQuestions.length - 1))}
+            onClick={handleSaveAndNext}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Save and Next
+          </button>
+
+          <button
+            onClick={handleReviewAndNext}
             className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
           >
-            {currentQuestionIndex < newQuestions.length - 1 ? "Review and Next" : "Review"}
+            Review and Next
           </button>
         </div>
 
+        
         {currentQuestionIndex === newQuestions.length - 1 && (
           <button onClick={handleSubmitExam} className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             Submit Exam

@@ -130,9 +130,9 @@ const StudentBody = () => {
     }
   };
     return (
-      <div className=" min-h-screen flex flex-col bg-gray-950 items-center p-6">
+      <div className=" min-h-screen flex flex-col  bg-gray-950 items-center p-6">
         {/* <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome</h1> */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 mb-0 w-full max-w-5xl">
           <Card
             title="Upcoming Exams"
             icon={<FaClipboardList size={24} />}

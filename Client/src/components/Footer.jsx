@@ -2,7 +2,7 @@
 
 const Footer = () => {
   return (
-    <div className="foot bottom-0 ">
+    // <div className="foot bottom-0 ">
      <footer className="footer footer-center bg-base-300 text-base-content rounded p-10 h-14 ">
   <nav className="grid grid-flow-col gap-4">
     <a className="link link-hover">About us</a>
@@ -51,7 +51,7 @@ const Footer = () => {
     <p>Copyright © {new Date().getFullYear()} - All right reserved by ACME Industries Ltd</p>
   </aside>
 </footer>
-    </div>
+    
   )
 }
 

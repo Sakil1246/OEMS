@@ -29,27 +29,41 @@ const TeacherBody = () => {
   //     .catch((err) => console.error(err));
   // }, []);
 
-  const Card = ({ title, description, icon, onClick, color }) => (
-    <div 
-      onClick={onClick} 
-      className="cursor-pointer bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300 border border-gray-200"
-    >
+  // const Card = ({ title, description, icon, onClick, color }) => (
+  //   <div 
+  //     onClick={onClick} 
+  //     className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl h-7 w-7 flex flex-col items-center hover:scale-105 transition-all duration-300 border border-gray-200"
+  //   >
+  //     <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${color}`}>
+  //       {icon}
+  //     </div>
+  //     <h3 className="text-xl font-semibold text-white mt-4">{title}</h3>
+  //     <p className="text-gray-200 pt-5 text-sm">{description}</p>
+  //   </div>
+  // );
+
+  const Card = ({ title, icon,  color, description,onClick }) => (
+    <div
+      onClick={onClick}
+      className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex flex-col items-center hover:scale-105 transition-all duration-300 border border-gray-200">
       <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${color}`}>
         {icon}
       </div>
-      <h3 className="text-xl font-semibold text-gray-800 mt-4">{title}</h3>
-      <p className="text-gray-500 text-sm">{description}</p>
+      <h3 className="text-xl font-semibold text-gray-50 mt-4">{title}</h3>
+      <p className="text-gray-200 text-sm">{description}</p>
     </div>
+
   );
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
+    <div className="bg-black min-h-screen flex flex-col">
       {/* <Navbar /> Uncomment if needed */}
-      <div className="flex flex-grow">
+      {/* <div className="flex flex-grow"> */}
         {/* <Sidebar role="teacher" /> Uncomment if needed */}
-        <main className="flex-grow p-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Teacher Dashboard</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold text-white text-center  mt-9">Teacher Dashboard</h1>
+        <main className="flex-grow items-center min-h-screen flex flex-col  ">
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 mb-0 w-full max-w-5xl ">
             <Card 
               title="Upcoming Exams" 
               description={`${upcomingExams.length} exam(s) scheduled`} 
@@ -77,7 +91,7 @@ const TeacherBody = () => {
             />
           </div>
         </main>
-      </div>
+      {/* </div> */}
       {/* <Footer /> Uncomment if needed */}
     </div>
   );

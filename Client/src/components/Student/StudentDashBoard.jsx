@@ -7,7 +7,7 @@ const StudentDashBoard = () => {
   return (
     (<div className="min-h-screen flex flex-col w-full">
       <Navbar />
-      <main className="flex-1 overflow-auto pt-10">
+      <main className="flex-1  bg-gray-950 overflow-auto  ">
         <Outlet /> 
       </main>
       <Footer />

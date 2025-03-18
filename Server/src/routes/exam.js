@@ -159,20 +159,29 @@ examRouter.get("/student/exam/:examId/questions", authStudent, async (req, res) 
 
 examRouter.post("/student/exam/submit/:examId", authStudent, async (req, res) => {
   try {
-    const answers= req.body;
-    if (!Array.isArray(answers)) return res.status(400).json({ message: "Invalid answers format." });
+    const { examId } = req.params;  // Extract examId from URL
+    const answers = req.body;
 
-    const answerDocs = answers.map(ans => ({
-      examId, questionId: ans.questionId, studentId: req.student._id,
-      answerText: ans.answerText || null, selectedOption: ans.selectedOption || null
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({ message: "Invalid answers format." });
+    }
+
+    const answerDocs = answers.map((ans) => ({
+      examId: examId,  // Explicitly set examId
+      questionId: ans.questionId,
+      studentId: req.student._id,
+      answerText: ans.answerText || null,
+      selectedOption: ans.selectedOption || null,
     }));
 
     await Answer.insertMany(answerDocs);
     res.status(200).json({ message: "Answers submitted successfully" });
   } catch (err) {
+    console.error("Submission Error:", err);
     res.status(500).json({ message: "Submission failed", error: err.message });
   }
 });
+
 
 
 examRouter.post("/teacher/evaluate", authTeacher, async (req, res) => {

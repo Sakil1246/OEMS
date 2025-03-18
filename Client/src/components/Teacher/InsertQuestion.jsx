@@ -158,7 +158,7 @@ const InsertQuestions = () => {
         
       };
 
-      console.log("Submitting Exam Payload:", payload);
+      //console.log("Submitting Exam Payload:", payload);
 
       const response = await axios.post(`${Basic_URL}teacher/exam/create`, payload, {
         headers: { "Content-Type": "application/json" }, withCredentials: true,
