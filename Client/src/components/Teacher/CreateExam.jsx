@@ -151,19 +151,15 @@ const CreateExam = () => {
               Start Time <span className="text-red-500">*</span>
             </label>
             <DatePicker
-              selected={
-                examDetails.startTime
-                  ? parse(examDetails.startTime, "dd/MM/yyyy, hh:mm a", new Date())
-                  : null
-              }
-              onChange={(date) => handleChange("startTime", date)}
-              showTimeSelect
-              timeFormat="hh:mm aa"
-              timeIntervals={15}
-              dateFormat="dd/MM/yyyy, hh:mm a"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholderText="Select Date & Time"
-            />
+      selected={examDetails.startTime ? parse(examDetails.startTime, "dd/MM/yyyy, hh:mm a", new Date()) : null}
+      onChange={(date) => handleChange("startTime", date)}
+      showTimeSelect
+      timeFormat="hh:mm aa"
+      timeIntervals={15}
+      dateFormat="dd/MM/yyyy, hh:mm a"
+      className="w-full p-3 rounded-lg border placeholder:text-white border-gray-300 text-white bg-black focus:ring-2 focus:ring-blue-500 outline-none"
+      placeholderText="Select Date & Time"
+    />
             {errors.startTime && <p className="text-red-500 text-sm">{errors.startTime}</p>}
           </div>
           <div className="mb-4">

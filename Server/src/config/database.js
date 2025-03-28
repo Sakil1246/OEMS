@@ -1,7 +1,14 @@
 const mongoose=require("mongoose");
+const dotenv=require("dotenv");
+dotenv.config();
 
 const connectDB=async()=>{
-    await mongoose.connect("mongodb+srv://sa2747911:9XHTQC3bfPL11PMN@oems.b5mdi.mongodb.net/");
+    await mongoose.connect(process.env.MONGO_URL,{
+        // to avoid deprecation warnings
+        useNewUrlParser:true,
+        useUnifiedTopology:true
+
+    });
 };
 
 

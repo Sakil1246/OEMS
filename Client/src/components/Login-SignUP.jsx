@@ -11,8 +11,8 @@ const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [role, setRole] = useState("student");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rollNo, setRollNo] = useState("");
+  const [password, setPassword] = useState("sakil123");
+  const [rollNo, setRollNo] = useState("csb22018");
   const [otp, setOtp] = useState("");
   const [firstName, setfirstName] = useState("");
   const [lastName, setlastName] = useState("");
@@ -48,8 +48,8 @@ const AuthForm = () => {
         );
 
         console.log(res.data);
-        setError("");
         dispatch(addStudent(res.data.data));
+        setError("");
         return navigate("/studentDashboard");
       }
       else if (role === "teacher") {
@@ -99,14 +99,14 @@ const AuthForm = () => {
           { email, password },
           { withCredentials: true }
         );
-        //console.log(response.data);
+       
         dispatch(addAdmin(response.data.data));
         setError("");
         return navigate("/adminDashboard");
       }
     } catch (err) {
       if (err.response && err.response.data) {
-        setError(err.response.data.error || "Something went wrong");  // CATCH ERROR MESSAGE
+        setError(err.response.data.error || "Something went wrong");  
       } else {
         setError("Network error. Please try again.");
       }
@@ -208,7 +208,7 @@ const AuthForm = () => {
           </>
         )}
 
-        {showSendOtp && (
+        {isSignUp && showSendOtp && (
           <div>
             <button className="bg-blue-500 text-white rounded-sm mb-3" onClick={handleSendOTP}> Send OTP</button>
           </div>
@@ -226,7 +226,7 @@ const AuthForm = () => {
           </>
         )}
 
-        {showOtpInput && (
+        {isSignUp &&showOtpInput && (
           <input
             type="text"
             placeholder="Enter OTP"

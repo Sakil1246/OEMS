@@ -64,7 +64,7 @@ studentAuthRouter.post("/student/sendEmail", async (req, res) => {
               return res.status(500).json({ message: "Email failed to send" });
           }
 
-          console.log("Email sent: ", info.response);
+          //console.log("Email sent: ", info.response);
           res.json({ message: "OTP sent successfully" });
       });
   } catch (error) {
