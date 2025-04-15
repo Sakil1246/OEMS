@@ -47,7 +47,7 @@ studentAuthRouter.post("/student/sendEmail", async (req, res) => {
 
       
       const otp = generateOTP();
-      otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // Store for 5 minutes
+      otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; 
 
       
       const mailOptions = {

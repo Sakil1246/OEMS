@@ -20,7 +20,7 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json());//to convert json to js object that comes from req.body
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
