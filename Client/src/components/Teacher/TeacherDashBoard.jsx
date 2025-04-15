@@ -6,8 +6,8 @@ const TeacherDashBoard = () => {
   return (
     (<div className="min-h-screen flex flex-col w-full">
       <Navbar />
-      <main className="flex-1  overflow-auto ">
-        <Outlet /> {/* This will render child components based on the route */}
+      <main className="flex-1   ">
+        <Outlet /> 
       </main>
       <Footer />
     </div>)

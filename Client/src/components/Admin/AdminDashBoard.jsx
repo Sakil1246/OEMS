@@ -1,5 +1,5 @@
-import Navbar from './Navbar'
-import Footer from './Footer'
+import Navbar from '../Navbar'
+import Footer from '../Footer'
 // import Sidebar from './Sidebar'
 import DashboardCards from './DashboardCards'
 //import StudentStats from './StudentStats'

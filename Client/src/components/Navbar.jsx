@@ -46,7 +46,7 @@ const Navbar = () => {
     <div>
      <div className="navbar  bg-gray-800 border-b-4 ">
   <div className="flex-1">
-    <Link className="btn btn-ghost text-orange-500 text-xl bg-gray-700" to={"/"+status+"dashboard"}>ExamZen</Link>
+    <Link className="btn btn-ghost text-orange-500 text-2xl font-bold" to={"/"+status+"dashboard"}>ExamZen</Link>
   </div>
   <div className="flex-none gap-2">
     {/* <div className="form-control">

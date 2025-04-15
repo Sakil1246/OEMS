@@ -12,36 +12,7 @@ const TeacherBody = () => {
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Fetch upcoming exams
-  //   axios.get("/api/teacher/upcoming-exams")
-  //     .then((res) => setUpcomingExams(res.data))
-  //     .catch((err) => console.error(err));
-
-  //   // Fetch student performance data
-  //   axios.get("/api/teacher/student-performance")
-  //     .then((res) => setStudentPerformance(res.data))
-  //     .catch((err) => console.error(err));
-
-  //   // Fetch notifications/announcements
-  //   axios.get("/api/teacher/notifications")
-  //     .then((res) => setNotifications(res.data))
-  //     .catch((err) => console.error(err));
-  // }, []);
-
-  // const Card = ({ title, description, icon, onClick, color }) => (
-  //   <div 
-  //     onClick={onClick} 
-  //     className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl h-7 w-7 flex flex-col items-center hover:scale-105 transition-all duration-300 border border-gray-200"
-  //   >
-  //     <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${color}`}>
-  //       {icon}
-  //     </div>
-  //     <h3 className="text-xl font-semibold text-white mt-4">{title}</h3>
-  //     <p className="text-gray-200 pt-5 text-sm">{description}</p>
-  //   </div>
-  // );
-
+  
   const Card = ({ title, icon,  color, description,onClick }) => (
     <div
       onClick={onClick}
@@ -57,9 +28,7 @@ const TeacherBody = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      {/* <Navbar /> Uncomment if needed */}
-      {/* <div className="flex flex-grow"> */}
-        {/* <Sidebar role="teacher" /> Uncomment if needed */}
+      
         <h1 className="text-3xl font-bold text-white text-center  mt-9">Teacher Dashboard</h1>
         <main className="flex-grow items-center min-h-screen flex flex-col  ">
           
@@ -75,7 +44,7 @@ const TeacherBody = () => {
               description="Create, edit, or delete exam details" 
               icon={<FaChalkboardTeacher size={24} />} 
               color="bg-blue-500"
-              onClick={() => navigate("/teacherDashboard/create-exam")}
+              onClick={() => navigate("/teacherDashboard/exam-option")}
             />
             <Card 
               title="Student Performance" 
@@ -91,8 +60,7 @@ const TeacherBody = () => {
             />
           </div>
         </main>
-      {/* </div> */}
-      {/* <Footer /> Uncomment if needed */}
+      
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Provider, useSelector } from "react-redux";
 import { store } from "./utils/appStore";
 
 import SignIn from "./components/Login-SignUP";
-import AdminDashBoard from "./components/AdminDashBoard";
+import AdminDashBoard from "./components/Admin/AdminDashBoard";
 import StudentDashBoard from "./components/Student/StudentDashBoard";
 import TeacherDashBoard from "./components/Teacher/TeacherDashBoard";
 import CreateExam from "./components/Teacher/CreateExam";
@@ -19,6 +19,7 @@ import OngoingExams from "./components/Student/OngoingExams";
 import MissedExams from "./components/Student/MissedExams";
 import Notifications from "./components/Student/Notifications";
 import Progress from "./components/Student/Progress";
+import TeacherExamOption from "./components/Teacher/Teacher.Exam.Option";
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
 
           <Route path="/adminDashboard" element={<AdminDashBoard />} />
 
-          {/* Nested Student Routes */}
+          
           {student &&
 
             <Route path="/studentdashboard" element={<StudentDashBoard />} >
@@ -51,15 +52,16 @@ function App() {
           {student &&<Route path="timer" element={<ExamTimer />} />}
           {student &&<Route path="examStart" element={<StartExam />} />}
 
-          {/* Nested Teacher Routes */}
+          
           {teacher && <Route path="/teacherDashboard" element={<TeacherDashBoard />}>
 
             <Route index element={<TeacherBody />} />
             <Route path="create-exam" element={<CreateExam />} />
             <Route path="insert-questions" element={<InsertQuestions />} />
+            <Route path="exam-option" element={<TeacherExamOption/>}/>
           </Route>}
 
-          {/* Redirect unknown routes to home */}
+          
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
