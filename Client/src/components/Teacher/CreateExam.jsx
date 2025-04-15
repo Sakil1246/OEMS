@@ -28,10 +28,10 @@ const CreateExam = () => {
     sessionStorage.getItem("visitedInsertQuestions") ? true : false
   );
   const [showInsertQuestion, setShowInsertQuestion] = useState(
-    sessionStorage.getItem("visitedInsertQuestions")? false : true  
+    sessionStorage.getItem("visitedInsertQuestions") ? false : true
   );
 
-  
+
   useEffect(() => {
     localStorage.setItem("examDetails", JSON.stringify(examDetails));
   }, [examDetails]);
@@ -99,7 +99,7 @@ const CreateExam = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#0F0F24] p-6">
       <div className="bg-gray-100 shadow-lg rounded-xl p-8 w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Exam</h1>
         <form>
@@ -112,7 +112,7 @@ const CreateExam = () => {
               name="department"
               value={examDetails.department}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg  rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.department && <p className="text-red-500 text-sm">{errors.department}</p>}
           </div>
@@ -125,7 +125,7 @@ const CreateExam = () => {
               name="semester"
               value={examDetails.semester}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.semester && <p className="text-red-500 text-sm">{errors.semester}</p>}
           </div>
@@ -139,7 +139,7 @@ const CreateExam = () => {
               name="examName"
               value={examDetails.examName}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full bg-[#0F0F24] text-slate-100 text-lg p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.examName && <p className="text-red-500 text-sm">{errors.examName}</p>}
           </div>
@@ -151,15 +151,15 @@ const CreateExam = () => {
               Start Time <span className="text-red-500">*</span>
             </label>
             <DatePicker
-      selected={examDetails.startTime ? parse(examDetails.startTime, "dd/MM/yyyy, hh:mm a", new Date()) : null}
-      onChange={(date) => handleChange("startTime", date)}
-      showTimeSelect
-      timeFormat="hh:mm aa"
-      timeIntervals={15}
-      dateFormat="dd/MM/yyyy, hh:mm a"
-      className="w-full p-3 rounded-lg border placeholder:text-white border-gray-300 text-white bg-black focus:ring-2 focus:ring-blue-500 outline-none"
-      placeholderText="Select Date & Time"
-    />
+              selected={examDetails.startTime ? parse(examDetails.startTime, "dd/MM/yyyy, hh:mm a", new Date()) : null}
+              onChange={(date) => handleChange("startTime", date)}
+              showTimeSelect
+              timeFormat="hh:mm aa"
+              timeIntervals={15}
+              dateFormat="dd/MM/yyyy, hh:mm a"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border placeholder:text-white border-gray-300   focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholderText="Select Date & Time"
+            />
             {errors.startTime && <p className="text-red-500 text-sm">{errors.startTime}</p>}
           </div>
           <div className="mb-4">
@@ -171,7 +171,7 @@ const CreateExam = () => {
               name="duration"
               value={examDetails.duration}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.duration && <p className="text-red-500 text-sm">{errors.duration}</p>}
           </div>
@@ -185,7 +185,7 @@ const CreateExam = () => {
               name="subjectName"
               value={examDetails.subjectName}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.subjectName && <p className="text-red-500 text-sm">{errors.subjectName}</p>}
           </div>
@@ -201,7 +201,7 @@ const CreateExam = () => {
               name="totalMarks"
               value={examDetails.totalMarks}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
             {errors.totalMarks && <p className="text-red-500 text-sm">{errors.totalMarks}</p>}
           </div>
@@ -214,7 +214,7 @@ const CreateExam = () => {
               name="passingMarks"
               value={examDetails.passingMarks}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
@@ -226,7 +226,7 @@ const CreateExam = () => {
               name="aboutExam"
               value={examDetails.aboutExam}
               onChange={(e) => handleChange(e.target.name, e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             ></textarea>
           </div>
 
@@ -240,7 +240,7 @@ const CreateExam = () => {
               Reset
             </button>
 
-           {showInsertQuestion &&( <button
+            {showInsertQuestion && (<button
               type="button"
               onClick={handleNext}
               className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition-all"
