@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import axios from 'axios';
 import { Basic_URL } from '../../utils/constants';
+
 const EditExam = () => {
     const teacherId = useSelector((store) => store.teacher._id);
     const [exam, setExam] = useState([]);
+    const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
     const fetchExamList = async () => {
-       try{ const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
-        setExam(examlist.data.data);}
-        catch(err){
-            console.error("Failed to fetched exam list:",err);
-            
+        try {
+            const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
+            setExam(examlist.data.data);
+        } catch (err) {
+            console.error("Failed to fetch exam list:", err);
         }
-    }
+    };
 
     useEffect(() => {
         fetchExamList();
@@ -29,72 +32,96 @@ const EditExam = () => {
             minute: '2-digit',
             hour12: true
         };
-    
         return date.toLocaleString('en-GB', options).replace(',', ', ');
     };
-    
 
-    const handleDelete=async({id})=>{
-        console.log(id);
-        const res=await axios.post(Basic_URL+"teacher/exam/delete",{id:id},{withCredentials:true});
-    }
+    const handleDelete = async ({ id }) => {
+        try {
+            await axios.post(`${Basic_URL}teacher/exam/delete`, { id }, { withCredentials: true });
+            setExam(prev => prev.filter(item => item._id !== id));
+            setToast("Exam deleted successfully!");
+        } catch (err) {
+            console.log("Failed to delete the exam");
+        }
+    };
 
-
-    const Card = ({ key,title, onClick, date, marks,createdAt }) => (
-        <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between  w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300 ">
+    const Card = ({ title, onClick, date, marks, createdAt }) => (
+        <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300">
             <div>
                 <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
                 {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}
-                <p className="text-gray-300 text-lg font-medium mt-2">
-                    {"Marks: " + marks}
-                </p>
-                <p className="text-gray-300 text-lg font-medium mt-2">
-                    {"Exam Date: " + date}
-                </p>
-
+                <p className="text-gray-300 text-lg font-medium mt-2">{"Marks: " + marks}</p>
+                <p className="text-gray-300 text-lg font-medium mt-2">{"Exam Date: " + date}</p>
             </div>
             <div>
-                <div  className='  flex justify-end'>
-                <p className=" text-white font-semibold px-4 py-2 mt-4 rounded-lg " >
-                {"Created At: " +formatDateToIST(createdAt)}
-                </p>
+                <div className='flex justify-end'>
+                    <p className="text-white font-semibold px-4 py-2 mt-4 rounded-lg">
+                        {"Created At: " + formatDateToIST(createdAt)}
+                    </p>
                 </div>
-                <div className='  flex justify-end'>
-                <button className="bg-blue-500 text-white font-semibold px-4 py-2 mt-4 rounded-lg ">
-                    Edit
-                </button>
-                <button className="bg-red-500 ml-3 text-white font-semibold px-4 py-2 mt-4 rounded-lg "onClick={onClick} >
-                    Delete
-                </button>
+                <div className='flex justify-end'>
+                    <button className="bg-blue-500 text-white font-semibold px-4 py-2 mt-4 rounded-lg">
+                        Edit
+                    </button>
+                    <button
+                        className="bg-red-500 ml-3 text-white font-semibold px-4 py-2 mt-4 rounded-lg"
+                        onClick={onClick}
+                    >
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
     );
 
     return (
-        <div>
+        <div className='flex justify-center items-center flex-col'>
             
-            {(exam?.length==0) && (
-                <h1 className='text-2xl font-bold mt-5  text-center text-red-500'>You have not  created any exam </h1>
+            {deleteConfirmId && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-md w-[90%] max-w-md">
+                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Are you sure you want to delete this exam?</h2>
+                        <div className="flex justify-end space-x-4">
+                            <button
+                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-4 py-2 rounded"
+                                onClick={() => setDeleteConfirmId(null)}
+                            >
+                                No
+                            </button>
+                            <button
+                                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded"
+                                onClick={() => {
+                                    handleDelete({ id: deleteConfirmId });
+                                    setDeleteConfirmId(null);
+                                }}
+                            >
+                                Yes, Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
-            {(exam.length!==0) && (
-                <div className="flex flex-wrap justify-center gap-8 w-full mt-12 max-w-6xl">
-                    <h1 className='text-2xl font-bold mt-5 ml-20 text-white'>The list of exams you have created</h1>
-                    {exam?.map((exam) => (
+            {exam?.length === 0 ? (
+                <h1 className='text-2xl font-bold mt-5 text-center text-red-500'>
+                    You have not created any exam
+                </h1>
+            ) : (
+                <div className="flex flex-wrap justify-center items-center gap-8 w-full mt-12 max-w-6xl">
+                    <h1 className='text-2xl font-bold mt-5 text-white text-center w-full'>The list of exams you have created</h1>
+                    {exam.map((examItem) => (
                         <Card
-                            key={exam._id}
-                            title={[exam.examName, exam.subjectName]}
-                            date={exam.startTime}
-                            marks={exam.totalMarks}
-                            createdAt={exam.createdAt}
-                            onClick={()=>{handleDelete({id:exam._id})}}
-
+                            key={examItem._id}
+                            title={[examItem.examName, examItem.subjectName]}
+                            date={examItem.startTime}
+                            marks={examItem.totalMarks}
+                            createdAt={examItem.createdAt}
+                            onClick={() => setDeleteConfirmId(examItem._id)}
                         />
                     ))}
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default EditExam
+export default EditExam;

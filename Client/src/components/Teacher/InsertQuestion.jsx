@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Basic_URL } from "../../utils/constants";
 
+
+
 const InsertQuestions = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { examDetails } = location.state || {};
-
+  const [errorMessage, setErrorMessage] = useState("");
   const createEmptyQuestion = (questionType = "Subjective") => ({
     questionType,
     questionFormat: "Text",
@@ -124,7 +126,10 @@ const InsertQuestions = () => {
   };
 
   const handleCreateExam = async () => {
+    setErrorMessage("");
+
     try {
+
       // Filter out empty questions (those with blank questionText)
       const filteredQuestions = questions.filter(q => q.questionText.trim() !== "");
 
@@ -154,8 +159,8 @@ const InsertQuestions = () => {
         passingMarks: examDetails.passingMarks ? Number(examDetails.passingMarks) : undefined,
         aboutExam: examDetails.aboutExam ? examDetails.aboutExam : undefined,
         questions: filteredQuestions,
-        department:examDetails.department,
-        
+        department: examDetails.department,
+
       };
 
       //console.log("Submitting Exam Payload:", payload);
@@ -169,18 +174,21 @@ const InsertQuestions = () => {
       //localStorage.removeItem(examDetails);
       navigate("/teacherDashboard");
     } catch (error) {
-      if (error.response) {
-        console.error("Error creating exam:", error.response.data);
+      if (error.response && error.response.data && error.response.data.error) {
+        console.error("Error creating exam:", error.response.data.error);
+        setErrorMessage(error.response.data.error);
       } else {
         console.error("Error:", error.message);
+        setErrorMessage("Something went wrong. Please try again.");
       }
     }
+
 
   };
 
 
 
-
+//console.log(errorMessage.error);
   return (
     <div className="min-h-screen p-8 bg-[#0F0F24]">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
@@ -253,8 +261,8 @@ const InsertQuestions = () => {
                   <p className={`mt-1 text-sm ${uploadStatus[`${qIndex}-q`] === "Upload successful" ? "text-green-600" : "text-red-600"}`}>
                     {uploadStatus[`${qIndex}-q`]}
                   </p>
-                )}      
-              </> 
+                )}
+              </>
             )}
 
             {/* Options (for MCQ and MSQ) */}
@@ -325,9 +333,10 @@ const InsertQuestions = () => {
 
             <label className="block mt-2 font-medium text-gray-500 mb-1">Bloom's Level</label>
             <select className="w-full border p-3 rounded"
-            value={q.bloomLevel}
-            onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
+              value={q.bloomLevel}
+              onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
             >
+              <option>Select bloom's level</option>
               <option>Remember</option>
               <option >Understand</option>
               <option>Apply</option>
@@ -345,6 +354,12 @@ const InsertQuestions = () => {
             />
           </div>
         ))}
+       {errorMessage && (
+  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
+    <strong className="font-bold">Error: </strong>
+    <span className="block sm:inline">{errorMessage}</span>
+  </div>
+)}
 
         {/* Buttons */}
         <div className="flex justify-start space-x-4 mt-6">
@@ -367,7 +382,7 @@ const InsertQuestions = () => {
             Create Exam
           </button>
         </div>
-
+        
       </div>
     </div>
   );
