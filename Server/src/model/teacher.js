@@ -38,7 +38,7 @@ const teacherSchema=mongoose.Schema({
     //     type:mongoose.Schema.Types.ObjectId,
     //     ref:'Exam'
     // }
-},{timestamp:true});
+},{timestamps: true});
  
 teacherSchema.methods.getJWT=async function(){
     const user=this;

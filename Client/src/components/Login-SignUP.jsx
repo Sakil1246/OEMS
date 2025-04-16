@@ -48,7 +48,7 @@ const AuthForm = () => {
           { withCredentials: true }
         );
 
-        console.log(res.data);
+        //console.log(res.data);
         dispatch(addStudent(res.data.data));
         setError("");
         return navigate("/studentDashboard");
@@ -59,7 +59,7 @@ const AuthForm = () => {
           { firstName, lastName, email, password },
           { withCredentials: true }
         );
-        console.log(respond.data);
+        //console.log(respond.data);
         setError("");
         dispatch(addTeacher(respond.data.data));
         return navigate("/teacherDashboard");
@@ -140,7 +140,7 @@ const AuthForm = () => {
   
 return (
   <div
-    className="flex flex-col items-center justify-center min-h-screen p-6 bg-cover bg-center"
+    className="flex flex-col bg-[#1f1f62] items-center justify-center min-h-screen p-6 bg-cover bg-center"
     style={{ backgroundImage: `url(${BG_Image})` }}
   >
     <motion.div
@@ -149,19 +149,19 @@ return (
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.4 }}
-      className="bg-white p-6 rounded-lg shadow-lg w-4/12 bg-opacity-90"
+      className="bg-[#1e293b] p-6 rounded-lg shadow-lg w-4/12 bg-opacity-90"
     >
       <motion.h2
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="text-4xl font-bold mb-4 text-center text-black"
+        className="text-4xl font-bold mb-4 text-center text-white"
       >
         {isSignUp ? "Sign Up" : "Sign In"}
       </motion.h2>
 
       {/* Role Selection */}
-      <label className="block mb-2 font-semibold text-black">Select Role</label>
+      <label className="block mb-2 font-semibold text-white">Select Role</label>
       <select
         className="w-full p-2 border rounded mb-4"
         value={role}
@@ -172,7 +172,7 @@ return (
         <option value="student">Student</option>
       </select>
 
-      {/* Animate fields */}
+     
       <AnimatePresence mode="wait">
         <motion.div
           key={isSignUp ? "signup-fields" : "signin-fields"}
@@ -183,7 +183,7 @@ return (
         >
           {isSignUp && (
             <>
-              <label className="label-text text-black">First Name</label>
+              <label className="label-text text-white">First Name</label>
               <input
                 type="text"
                 placeholder="Enter Your First Name"
@@ -192,7 +192,7 @@ return (
                 onChange={(e) => setfirstName(e.target.value)}
               />
 
-              <label className="label-text text-black">Last Name</label>
+              <label className="label-text text-white">Last Name</label>
               <input
                 type="text"
                 placeholder="Enter Your Last Name"
@@ -205,7 +205,7 @@ return (
 
           {isSignUp && role !== "admin" && (
             <>
-              <label className="label-text text-black">Department</label>
+              <label className="label-text text-white">Department</label>
               <input
                 type="text"
                 placeholder="Enter Your Department"
@@ -218,7 +218,7 @@ return (
 
           {role === "student" && (
             <>
-              <label className="label-text text-black">Roll No</label>
+              <label className="label-text text-white">Roll No</label>
               <input
                 type="text"
                 placeholder="ex: csb22018"
@@ -292,7 +292,7 @@ return (
         {isSignUp ? "Sign Up" : "Sign In"}
       </button>
 
-      <p className="flex justify-center text-gray-700 font-serif text-2xl">or</p>
+      <p className="flex justify-center text-gray-200 font-serif text-2xl">or</p>
 
       <button type="button" className="w-full p-3 md:p-4 my-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-300 flex items-center justify-center gap-2">
         <svg className="w-5 h-5" viewBox="0 0 24 24">

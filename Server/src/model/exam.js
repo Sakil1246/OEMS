@@ -21,6 +21,6 @@ const examSchema = new mongoose.Schema({
   aboutExam: { type: String },
   duration: { type: Number, required: true }, //  minutes
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-});
+},{timestamps: true});
 
 module.exports = mongoose.model("Exam", examSchema);

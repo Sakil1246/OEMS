@@ -182,7 +182,7 @@ const InsertQuestions = () => {
 
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
+    <div className="min-h-screen p-8 bg-[#0F0F24]">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Insert Questions</h1>
 
@@ -324,12 +324,17 @@ const InsertQuestions = () => {
             )}
 
             <label className="block mt-2 font-medium text-gray-500 mb-1">Bloom's Level</label>
-            <input
-              type="text"
-              value={q.bloomLevel}
-              onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
-              className="w-full border p-2 rounded"
-            />
+            <select className="w-full border p-3 rounded"
+            value={q.bloomLevel}
+            onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
+            >
+              <option>Remember</option>
+              <option >Understand</option>
+              <option>Apply</option>
+              <option>Analyze</option>
+              <option>Evaluate</option>
+              <option>Create</option>
+            </select>
 
             <label className="block mt-2 font-medium text-gray-500 mb-1">Marks</label>
             <input

@@ -25,6 +25,6 @@ const questionSchema = new mongoose.Schema({
   questionFormat: { type: String, enum: ["Image", "Text"], required: true },
   marks: { type: Number, default: 5 },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Teacher", required: true }
-});
+},{timestamps: true});
 
 module.exports = mongoose.model("Question", questionSchema);

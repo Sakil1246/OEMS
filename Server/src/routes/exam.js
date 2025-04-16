@@ -200,4 +200,17 @@ examRouter.post("/teacher/evaluate", authTeacher, async (req, res) => {
   }
 });
 
+
+examRouter.get("/teacher/:teacherId/examlist",authTeacher,async(req,res)=>{
+  try{
+    const {teacherId}=req.params;
+    const examList=await Exam.find({teacherId:teacherId});
+    res.status(200).json({message:"Successfully fetched exam list",data:examList})
+  }catch(err){
+    res.status(500).json({message:"Failed to fetched exams",error:err.message});
+  }
+})
+
+
+
 module.exports = examRouter;

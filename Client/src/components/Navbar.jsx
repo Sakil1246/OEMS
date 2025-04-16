@@ -26,7 +26,7 @@ const Navbar = () => {
   if(teacher) {role=teacher;
     status="teacher";
   }
-  console.log(status);
+  //console.log(status);
 
   const handleLogout=async()=>{
    

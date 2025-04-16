@@ -7,7 +7,7 @@ import { CircleOff } from "lucide-react";
 const MissedExams = () => {
   const location = useLocation();
   const response = location.state;
-   console.log(response);
+  // console.log(response);
   const navigate=useNavigate();
 
   if (response.length<=0) {

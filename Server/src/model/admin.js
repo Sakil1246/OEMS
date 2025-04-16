@@ -32,7 +32,7 @@ const adminSchema=mongoose.Schema({
         type:String,
         required:true
     }
-},{timestamp:true});
+},{timestamps: true});
  
 adminSchema.methods.getJWT=async function(){
     const user=this;

@@ -53,7 +53,7 @@ const StudentBody = () => {
   
         return now >= startTime && now <= endTime && exam.department === studentDepartment;
       });
-      console.log(ongoing);
+      //console.log(ongoing);
       setOngoingExams(ongoing.length || 0);
 
       const missed = res.data.filter((exam) => {
@@ -118,11 +118,11 @@ const StudentBody = () => {
   
        
         const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", new Date());
-        console.log(endTime);
+        //console.log(endTime);
   
         return now > endTime && exam.department === studentDepartment;
       });
-      console.log(missed);
+      //console.log(missed);
   
       navigate("/studentdashboard/missedExams", { state: missed });
     } catch (e) {

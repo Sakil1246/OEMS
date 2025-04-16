@@ -27,7 +27,7 @@ const TeacherExamOption = () => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        onClick={() => navigate("/teacherDashboard/create-exam")}
+        onClick={() => navigate("/teacherDashboard/edit-exam")}
         className="cursor-pointer bg-gradient-to-br from-[#1e1e2f] to-[#282842] shadow-2xl rounded-3xl p-8 w-full max-w-4xl border border-gray-600 hover:shadow-[#4c4cff] transition-all duration-300"
       >
         <h3 className="text-3xl font-bold text-white mb-3">Edit Exam</h3>

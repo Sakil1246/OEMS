@@ -8,6 +8,6 @@ const answerSchema = new mongoose.Schema({
   selectedOption: { type: Number }, // for MCQ selection
   evaluated: { type: Boolean, default: false }, // Teacher marks evaluation status
   marksObtained: { type: Number, default: 0 }
-});
+},{timestamps: true});
 
 module.exports = mongoose.model("Answer", answerSchema);

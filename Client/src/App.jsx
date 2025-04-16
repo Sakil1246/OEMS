@@ -20,6 +20,7 @@ import MissedExams from "./components/Student/MissedExams";
 import Notifications from "./components/Student/Notifications";
 import Progress from "./components/Student/Progress";
 import TeacherExamOption from "./components/Teacher/Teacher.Exam.Option";
+import EditExam from "./components/Teacher/Edit.Exam";
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
             <Route path="create-exam" element={<CreateExam />} />
             <Route path="insert-questions" element={<InsertQuestions />} />
             <Route path="exam-option" element={<TeacherExamOption/>}/>
+            <Route path="edit-exam" element={<EditExam/>}/>
           </Route>}
 
           
