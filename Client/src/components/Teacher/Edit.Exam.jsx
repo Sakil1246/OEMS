@@ -34,7 +34,13 @@ const EditExam = () => {
     };
     
 
-    const Card = ({ title, onClick, date, marks,createdAt }) => (
+    const handleDelete=async({id})=>{
+        console.log(id);
+        const res=await axios.post(Basic_URL+"teacher/exam/delete",{id:id},{withCredentials:true});
+    }
+
+
+    const Card = ({ key,title, onClick, date, marks,createdAt }) => (
         <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between  w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300 ">
             <div>
                 <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
@@ -48,27 +54,32 @@ const EditExam = () => {
 
             </div>
             <div>
-                <p className=" text-white font-semibold px-4 py-2 mt-4 rounded-lg " onClick={onClick}>
+                <div  className='  flex justify-end'>
+                <p className=" text-white font-semibold px-4 py-2 mt-4 rounded-lg " >
                 {"Created At: " +formatDateToIST(createdAt)}
                 </p>
+                </div>
+                <div className='  flex justify-end'>
                 <button className="bg-blue-500 text-white font-semibold px-4 py-2 mt-4 rounded-lg ">
                     Edit
                 </button>
-                <button className="bg-red-500 ml-3 text-white font-semibold px-4 py-2 mt-4 rounded-lg ">
+                <button className="bg-red-500 ml-3 text-white font-semibold px-4 py-2 mt-4 rounded-lg "onClick={onClick} >
                     Delete
                 </button>
+                </div>
             </div>
         </div>
     );
 
     return (
         <div>
-            <h1 className='text-2xl font-bold mt-5 ml-20 text-white'>The list of exams you have created</h1>
-            {!exam && (
-                <h1 className='text-2xl font-bold mt-5 ml-4 text-red-500'>You have not  created any exam </h1>
+            
+            {(exam?.length==0) && (
+                <h1 className='text-2xl font-bold mt-5  text-center text-red-500'>You have not  created any exam </h1>
             )}
-            {exam && (
+            {(exam.length!==0) && (
                 <div className="flex flex-wrap justify-center gap-8 w-full mt-12 max-w-6xl">
+                    <h1 className='text-2xl font-bold mt-5 ml-20 text-white'>The list of exams you have created</h1>
                     {exam?.map((exam) => (
                         <Card
                             key={exam._id}
@@ -76,6 +87,8 @@ const EditExam = () => {
                             date={exam.startTime}
                             marks={exam.totalMarks}
                             createdAt={exam.createdAt}
+                            onClick={()=>{handleDelete({id:exam._id})}}
+
                         />
                     ))}
                 </div>

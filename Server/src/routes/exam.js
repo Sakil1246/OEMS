@@ -23,6 +23,7 @@ cloudinary.config({
 
 
 const multer = require("multer");
+const exam = require("../model/exam");
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage });
 
@@ -211,6 +212,19 @@ examRouter.get("/teacher/:teacherId/examlist",authTeacher,async(req,res)=>{
   }
 })
 
-
+examRouter.post("/teacher/exam/delete",authTeacher,async(req,res)=>{
+  try{
+    const {id}=req.body;
+    const deletedExam=await Exam.findByIdAndDelete(id);
+    if(deletedExam){
+      res.status(200).json({message:"deleted succesfully"});
+    }
+    else{
+      res.status(400).json({message: "No exam found with that ID"});
+    }
+  }catch(err){
+    res.status(500).json({message:"Failed to delete exam",error:err.message});
+  }
+})
 
 module.exports = examRouter;
