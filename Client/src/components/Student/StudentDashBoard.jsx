@@ -10,7 +10,7 @@ const StudentDashBoard = () => {
       <main className="flex-1  bg-gray-950 overflow-auto  ">
         <Outlet /> 
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>)
   );
 }
