@@ -45,7 +45,7 @@ const EditExam = () => {
         }
     };
 
-    const Card = ({ title, onClick, date, marks, createdAt,department,semester }) => (
+    const Card = ({ title, onClick, date, marks, createdAt, department, semester }) => (
         <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300">
             <div>
                 <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
@@ -53,9 +53,9 @@ const EditExam = () => {
                 <p className="text-gray-300 text-lg font-medium mt-2">{"Marks: " + marks}</p>
                 <p className="text-gray-300 text-lg font-medium mt-2">{"Exam Date: " + date}</p>
                 <p className="text-gray-300 text-lg font-medium mt-2">
-  {"Department: " + department + ", " + semester + 
-    (semester === 1 ? "st" : semester === 2 ? "nd" : semester === 3 ? "rd" : "th") + " sem"}
-</p>
+                    {"Department: " + department + ", " + semester +
+                        (semester === 1 ? "st" : semester === 2 ? "nd" : semester === 3 ? "rd" : "th") + " sem"}
+                </p>
 
             </div>
             <div>
@@ -81,7 +81,7 @@ const EditExam = () => {
 
     return (
         <div className='flex justify-center items-center flex-col'>
-            
+
             {deleteConfirmId && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-[90%] max-w-md">
