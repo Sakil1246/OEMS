@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import axios from 'axios';
 import { Basic_URL } from '../../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 const EditExam = () => {
     const teacherId = useSelector((store) => store.teacher._id);
     const [exam, setExam] = useState([]);
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-
+    const navigate=useNavigate();
     const fetchExamList = async () => {
         try {
             const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
@@ -45,7 +46,7 @@ const EditExam = () => {
         }
     };
 
-    const Card = ({ title, onClick, date, marks, createdAt, department, semester }) => (
+    const Card = ({ title,onEditClick, onClick, date, marks, createdAt, department, semester }) => (
         <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300">
             <div>
                 <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
@@ -65,7 +66,7 @@ const EditExam = () => {
                     </p>
                 </div>
                 <div className='flex justify-end'>
-                    <button className="bg-blue-500 text-white font-semibold px-4 py-2 mt-4 rounded-lg">
+                    <button className="bg-blue-500 text-white font-semibold px-4 py-2 mt-4 rounded-lg" onClick={onEditClick}>
                         Edit
                     </button>
                     <button
@@ -123,6 +124,7 @@ const EditExam = () => {
                             department={examItem.department}
                             semester={examItem.semester}
                             onClick={() => setDeleteConfirmId(examItem._id)}
+                            onEditClick={()=>navigate("/teacherDashboard/Editexampaper")}
                         />
                     ))}
                 </div>
