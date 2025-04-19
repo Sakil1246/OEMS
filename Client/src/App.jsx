@@ -62,7 +62,7 @@ function App() {
             <Route path="insert-questions" element={<InsertQuestions />} />
             <Route path="exam-option" element={<TeacherExamOption/>}/>
             <Route path="edit-exam" element={<EditExam/>}/>
-            <Route path="Editexampaper" element={<Editexampaper/>}/>
+            <Route path="Editexampaper/:examIdt={<Editexampaper/>}/>
           </Route>}
 
           
