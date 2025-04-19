@@ -124,7 +124,7 @@ const EditExam = () => {
                             department={examItem.department}
                             semester={examItem.semester}
                             onClick={() => setDeleteConfirmId(examItem._id)}
-                            onEditClick={()=>navigate`/teacherDashboard/Editexampaper/${examItem._id}`}
+                            onEditClick={()=>navigate(`/teacherDashboard/Editexampaper/${examItem._id}`)}
                         />
                     ))}
                 </div>
