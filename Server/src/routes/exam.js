@@ -227,4 +227,16 @@ examRouter.post("/teacher/exam/delete",authTeacher,async(req,res)=>{
   }
 })
 
+examRouter.get("/teacher/exam/:examId",authTeacher,async(req,res)=>{
+  try{
+    const {examId}=req.params;
+    const getExam=await Exam.findById(examId);
+    if(getExam){
+      return res.status(200).json({message:"exam fetched successfully",data:getExam});
+    }
+  }catch(err){
+    res.status(500).json({message:"Failed to fetched exam",error:err.message});
+  }
+}  )
+
 module.exports = examRouter;
