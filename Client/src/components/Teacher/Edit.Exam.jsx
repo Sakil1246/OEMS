@@ -45,13 +45,18 @@ const EditExam = () => {
         }
     };
 
-    const Card = ({ title, onClick, date, marks, createdAt }) => (
+    const Card = ({ title, onClick, date, marks, createdAt,department,semester }) => (
         <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300">
             <div>
                 <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
                 {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}
                 <p className="text-gray-300 text-lg font-medium mt-2">{"Marks: " + marks}</p>
                 <p className="text-gray-300 text-lg font-medium mt-2">{"Exam Date: " + date}</p>
+                <p className="text-gray-300 text-lg font-medium mt-2">
+  {"Department: " + department + ", " + semester + 
+    (semester === 1 ? "st" : semester === 2 ? "nd" : semester === 3 ? "rd" : "th") + " sem"}
+</p>
+
             </div>
             <div>
                 <div className='flex justify-end'>
@@ -115,6 +120,8 @@ const EditExam = () => {
                             date={examItem.startTime}
                             marks={examItem.totalMarks}
                             createdAt={examItem.createdAt}
+                            department={examItem.department}
+                            semester={examItem.semester}
                             onClick={() => setDeleteConfirmId(examItem._id)}
                         />
                     ))}
