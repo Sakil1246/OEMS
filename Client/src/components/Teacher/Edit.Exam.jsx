@@ -66,11 +66,11 @@ const EditExam = () => {
                     </p>
                 </div>
                 <div className='flex justify-end'>
-                    <button className="bg-blue-500 text-white font-semibold px-4 py-2 mt-4 rounded-lg" onClick={onEditClick}>
+                    <button className="bg-blue-500 text-white font-semibold hover:bg-blue-400 px-4 py-2 mt-4 rounded-lg" onClick={onEditClick}>
                         Edit
                     </button>
                     <button
-                        className="bg-red-500 ml-3 text-white font-semibold px-4 py-2 mt-4 rounded-lg"
+                        className="bg-red-500 ml-3 text-white hover:bg-red-400 font-semibold px-4 py-2 mt-4 rounded-lg"
                         onClick={onClick}
                     >
                         Delete

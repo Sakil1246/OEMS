@@ -264,7 +264,7 @@ return (
             </div>
           )}
 
-          <label className="label-text text-black">
+          <label className="label-text  text-white">
             {isSignUp ? "Create a Password" : "Enter Your Password"}
           </label>
           <input

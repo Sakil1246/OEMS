@@ -203,7 +203,7 @@ const InsertQuestions = () => {
             <select
               value={q.questionType}
               onChange={(e) => handleQuestionChange(qIndex, "questionType", e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full border p-2 rounded text-white"
             >
               <option value="MCQ">MCQ</option>
               <option value="MSQ">MSQ</option>
@@ -215,7 +215,7 @@ const InsertQuestions = () => {
             <select
               value={q.questionFormat}
               onChange={(e) => handleQuestionChange(qIndex, "questionFormat", e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full border p-2 rounded text-white"
             >
               <option value="Text">Text</option>
               <option value="Image">Image</option>
@@ -227,7 +227,7 @@ const InsertQuestions = () => {
               type="text"
               value={q.questionText}
               onChange={(e) => handleQuestionChange(qIndex, "questionText", e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full border p-2 rounded text-white"
             />
 
             {/* File Upload for Image Questions */}
@@ -236,7 +236,7 @@ const InsertQuestions = () => {
                 <input
                   type="file"
                   onChange={(e) => handleFileSelect(e.target.files[0], qIndex, "questionImage")}
-                  className="mt-2"
+                  className="mt-2 text-white"
                 />
                 {selectedFiles[`${qIndex}-q`] && (
                   <div className="mt-2">
@@ -284,14 +284,14 @@ const InsertQuestions = () => {
                       type="text"
                       value={opt.text}
                       onChange={(e) => handleOptionChange(qIndex, optIndex, "text", e.target.value)}
-                      className="w-full border p-2 rounded mt-2"
+                      className="w-full border p-2 rounded mt-2 text-white"
                     />
                   ) : (
                     <>
                       <input
                         type="file"
                         onChange={(e) => handleFileSelect(e.target.files[0], qIndex, "image", optIndex)}
-                        className="mt-2"
+                        className="mt-2 text-white"
                       />
                       {selectedFiles[`${qIndex}-opt-${optIndex}`] && (
                         <div className="mt-2">
@@ -326,13 +326,13 @@ const InsertQuestions = () => {
                   type="text"
                   value={q.correctOptions}
                   onChange={(e) => handleQuestionChange(qIndex, "correctOptions", e.target.value)}
-                  className="w-full border p-2 rounded"
+                  className="w-full border p-2 rounded text-white"
                 />
               </>
             )}
 
             <label className="block mt-2 font-medium text-gray-500 mb-1">Bloom's Level</label>
-            <select className="w-full border p-3 rounded"
+            <select className="w-full border p-3 rounded text-white"
               value={q.bloomLevel}
               onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
             >
@@ -350,7 +350,7 @@ const InsertQuestions = () => {
               type="number"
               value={q.marks}
               onChange={(e) => handleQuestionChange(qIndex, "marks", e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full border p-2 rounded text-white"
             />
           </div>
         ))}

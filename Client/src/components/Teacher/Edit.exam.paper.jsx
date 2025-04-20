@@ -24,7 +24,7 @@ const Editexampaper = () => {
   };
   const [questions, setQuestions] = useState(loadSavedQuestions() || null);
 
-  
+
   const fetchExam = async () => {
     try {
       const getExam = await axios.get(Basic_URL + 'teacher/exam/' + id, { withCredentials: true });
@@ -46,17 +46,38 @@ const Editexampaper = () => {
       console.error('Failed to fetch exam:', error);
     }
   };
-  const fetchQuestion = async () => {
+  const fetchQuestions = async () => {
     try {
-      const getQuestions = await axios.get(Basic_URL + 'teacher/fetchquestions' + id, { withCredentials: true });
-      setQuestions(getQuestions?.data.data);
-    }catch (error) {
-      console.error('Failed to fetch question:', error);
+      const res = await axios.get(`${Basic_URL}teacher/fetchquestions/${id}`, {
+        withCredentials: true,
+      });
+
+      // Optional: normalize/validate if needed here
+      const formattedQuestions = res.data.data.map(q => ({
+        ...q,
+        options: q.options || [
+          { text: "", image: "", format: "Text" },
+          { text: "", image: "", format: "Text" },
+          { text: "", image: "", format: "Text" },
+          { text: "", image: "", format: "Text" }
+        ],
+        correctOptions: q.correctOptions || "",
+        questionText: q.questionText || "",
+        questionType: q.questionType || "MCQ",
+        questionFormat: q.questionFormat || "Text",
+        bloomLevel: q.bloomLevel || "Remember",
+        marks: q.marks || 1,
+      }));
+
+      setQuestions(formattedQuestions);
+    } catch (error) {
+      console.error("Failed to fetch question:", error);
     }
- }
+  };
+
   useEffect(() => {
     fetchExam();
-    fetchQuestion();
+    fetchQuestions();
   }, []);
 
   const [examDetails, setExamDetails] = useState({
@@ -133,7 +154,7 @@ const Editexampaper = () => {
     correctOptions: questionType !== "Subjective" ? "" : undefined,
   });
 
-  
+
 
 
 
@@ -219,9 +240,9 @@ const Editexampaper = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F0F24] p-6">
-      <div className="bg-gray-100 shadow-lg rounded-xl p-8 w-full max-w-3xl">
+      <div className="bg-white/100 shadow-lg rounded-xl p-8 w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Edit Exam</h1>
-        <form>
+        <form className='bg-red-50'>
           {/* Department */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
@@ -358,8 +379,9 @@ const Editexampaper = () => {
               className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             ></textarea>
           </div>
+          {/* Questions */}
           {questions.map((q, qIndex) => (
-            <div key={qIndex} className="mb-6 border p-4 rounded-lg bg-gray-100">
+            <div key={qIndex} className="mb-6 border p-4 rounded-lg bg-green-50">
               <label className="block text-lg font-medium text-gray-800 mb-1">Question {qIndex + 1}</label>
 
               {/* Question Type */}
@@ -385,7 +407,7 @@ const Editexampaper = () => {
                 <option value="Image">Image</option>
               </select>
 
-              {/* Always Visible Text Input for Question */}
+              
               <label className="block text-lg font-medium text-gray-500 mt-4">Enter Question</label>
               <input
                 type="text"
@@ -541,6 +563,14 @@ const Editexampaper = () => {
             >
               Add More Question
             </button>
+            <button
+              type="button"
+              // onClick={handleSave}
+              className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-all"
+            >
+              Save 
+            </button>
+
 
           </div>
         </form>
