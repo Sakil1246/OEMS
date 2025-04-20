@@ -7,7 +7,7 @@ const TermsCondition = () => {
     const navigate=useNavigate();
     const location=useLocation();
     const exam=location.state;
-    // console.log(exam);
+     console.log(exam);
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
             <div className="bg-white shadow-2xl rounded-xl p-8 max-w-lg w-full text-center border border-gray-200">

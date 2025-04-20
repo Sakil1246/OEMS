@@ -13,7 +13,7 @@ const ExamTimer = () => {
     return <h1 className="text-center text-red-500">No Exam Data Found!</h1>;
   }
 
-  const { examId,duration } = response;
+  const { examId,duration,examName,subjectName} = response;
   console.log(duration);
 
   const [questions, setQuestions] = useState([]);
@@ -50,7 +50,7 @@ const ExamTimer = () => {
 
   useEffect(() => {
     if (timeDiff <= 0) {
-      navigate("/examStart", { state: { questions,examId,duration } }); 
+      navigate("/examStart", { state: { questions,examId,duration,examName,subjectName} }); 
     }
   }, [timeDiff, navigate, questions]);
 

@@ -22,7 +22,7 @@ import Progress from "./components/Student/Progress";
 import TeacherExamOption from "./components/Teacher/Teacher.Exam.Option";
 import EditExam from "./components/Teacher/Edit.Exam";
 import Editexampaper from "./components/Teacher/Edit.exam.paper";
-
+import Studentsperfomance from "./components/Teacher/Students.perfomance";
 
 function App() {
   const teacher = useSelector((state) => state.teacher);
@@ -63,6 +63,7 @@ function App() {
             <Route path="exam-option" element={<TeacherExamOption/>}/>
             <Route path="edit-exam" element={<EditExam/>}/>
             <Route path="Editexampaper/:id" element={<Editexampaper/>}/>
+            <Route path="studentPerformance" element={<Studentsperfomance/>}/>
           </Route>}
 
           

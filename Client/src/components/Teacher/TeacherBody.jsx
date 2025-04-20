@@ -66,6 +66,7 @@ const TeacherBody = () => {
             title="Student Performance"
             description={studentPerformance ? `Average Score: ${studentPerformance.averageScore}` : "Loading..."}
             icon={<FaChartLine size={26} />}
+            onClick={() => navigate("/teacherDashboard/studentPerformance")}
             color="bg-green-500"
             index={2}
           />
@@ -74,6 +75,7 @@ const TeacherBody = () => {
             description={`${notifications.length} new announcements`}
             icon={<FaBell size={26} />}
             color="bg-red-500"
+            
             index={3}
           />
         </motion.div>
