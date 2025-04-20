@@ -160,7 +160,7 @@ examRouter.get("/student/exam/:examId/questions", authStudent, async (req, res) 
 
 examRouter.post("/student/exam/submit/:examId", authStudent, async (req, res) => {
   try {
-    const { examId } = req.params;  // Extract examId from URL
+    const { examId } = req.params; 
     const answers = req.body;
 
     if (!Array.isArray(answers)) {
@@ -168,7 +168,7 @@ examRouter.post("/student/exam/submit/:examId", authStudent, async (req, res) =>
     }
 
     const answerDocs = answers.map((ans) => ({
-      examId: examId,  // Explicitly set examId
+      examId: examId,  
       questionId: ans.questionId,
       studentId: req.student._id,
       answerText: ans.answerText || null,

@@ -14,7 +14,7 @@ const ExamTimer = () => {
   }
 
   const { examId,duration,examName,subjectName} = response;
-  console.log(duration);
+  //console.log(duration);
 
   const [questions, setQuestions] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());

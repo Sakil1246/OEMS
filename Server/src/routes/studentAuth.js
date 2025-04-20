@@ -38,7 +38,7 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 const otpStore = {};
 studentAuthRouter.post("/student/sendEmail", async (req, res) => {
   try {
-    console.log(req.body)
+    //console.log(req.body)
       const { rollNo } = req.body;
       if (!rollNo) return res.status(400).json({ message: "Roll number is required" });
 

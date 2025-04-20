@@ -32,8 +32,8 @@ const StartExam = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleAnswerChange = (questionId, answer) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+  const handleAnswerChange = (questionId, optionIndex) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
   };
 
   const handleSaveAndNext = () => {
@@ -55,11 +55,18 @@ const StartExam = () => {
 
   const handleSubmitExam = async () => {
     try {
-      const formattedAnswers = Object.keys(answers).map((questionId) => ({
-        questionId,
-        answerText: typeof answers[questionId] === "string" ? answers[questionId] : null,
-        selectedOption: typeof answers[questionId] === "string" ? null : answers[questionId],
-      }));
+      const formattedAnswers = Object.keys(answers).map((questionId) => {
+        const question = newQuestions.find(q => String(q._id) === String(questionId));
+        const isMCQ = question?.questionType === "MCQ";
+
+        return {
+          questionId,
+          answerText: isMCQ ? null : answers[questionId],
+          selectedOption: isMCQ ? answers[questionId]+1 : null,
+        };
+      });
+
+      console.log("Formatted Answers:", formattedAnswers);
 
       await axios.post(`${Basic_URL}student/exam/submit/${examId}`, formattedAnswers, {
         withCredentials: true,
@@ -75,7 +82,6 @@ const StartExam = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-100 p-6">
-      {/* Left: Question Panel */}
       <div className="bg-white shadow-lg rounded-lg p-6 w-3/4">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
@@ -112,12 +118,12 @@ const StartExam = () => {
                     <input
                       type="radio"
                       name={`question-${currentQuestionIndex}`}
-                      value={option.text}
+                      value={index}
                       checked={
-                        answers[newQuestions[currentQuestionIndex]._id] === option.text
+                        answers[newQuestions[currentQuestionIndex]._id] === index
                       }
                       onChange={() =>
-                        handleAnswerChange(newQuestions[currentQuestionIndex]._id, option.text)
+                        handleAnswerChange(newQuestions[currentQuestionIndex]._id, index)
                       }
                       className="mr-2"
                     />
@@ -172,7 +178,6 @@ const StartExam = () => {
         )}
       </div>
 
-      {/* Right: Question Navigator */}
       <div className="w-1/4 ml-4 p-4 bg-white shadow-lg rounded-lg h-full overflow-y-auto">
         <h3 className="text-lg font-semibold mb-4 text-center">Questions</h3>
         <div className="grid grid-cols-4 gap-2">

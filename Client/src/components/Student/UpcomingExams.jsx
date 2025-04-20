@@ -4,7 +4,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 const UpcomingExams = () => {
   const location = useLocation();
   const response = location.state;
-  console.log(response);
+  //console.log(response);
   const navigate = useNavigate();
 
   if (response.length <= 0) {
