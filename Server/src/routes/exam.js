@@ -239,4 +239,19 @@ examRouter.get("/teacher/exam/:examId",authTeacher,async(req,res)=>{
   }
 }  )
 
+examRouter.get("/teacher/fetchquestions/:examId",authTeacher,async(req,res)=>{
+  try{
+    const {examId}=req.params;
+    const  questions=await Exam.findById(examId).populate("questions");
+    if(!questions){
+      return res.status(400).json({message:"No questions related to this exam found"});
+    }
+    res.status(200).json({message:"questions fetched succesfully",data:questions});
+
+  }catch(err){
+    res.status(500).json({message:"Failed to fetched questions",error:err.message});
+  }
+})
+
+
 module.exports = examRouter;
