@@ -276,7 +276,10 @@ examRouter.get("/teacher/:examId/answers/count", authTeacher, async (req, res) =
 
     const count = result[0]?.submittedStudents || 0;
 
-    res.json({ submittedStudents: count });
+    res.status(200).json({
+      message: "Successfully fetched answers count",
+      data: count
+    });
 
   } catch (err) {
     res.status(500).json({
