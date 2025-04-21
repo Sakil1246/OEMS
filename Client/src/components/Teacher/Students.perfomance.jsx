@@ -56,7 +56,7 @@ const fetchExamList = async () => {
         return date.toLocaleString('en-GB', options).replace(',', ', ');
     };
 
-    const Card = ({ title,  date, marks, createdAt, department, semester, submissionCount }) => (
+    const Card = ({ title, onClick, date, marks, createdAt, department, semester, submissionCount }) => (
         <div className="cursor-pointer bg-green-950 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-95 transition-all duration-300 border border-gray-300">
           <div>
             <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
@@ -78,7 +78,7 @@ const fetchExamList = async () => {
               </p>
             </div>
             <div className='flex justify-end'>
-              <button className="bg-blue-500 text-white font-semibold hover:bg-blue-400 px-4 py-2 mt-4 rounded-lg" >
+              <button className="bg-blue-500 text-white font-semibold hover:bg-blue-400 px-4 py-2 mt-4 rounded-lg" onClick={onClick} >
                 View Submission
               </button>
             </div>
@@ -106,6 +106,7 @@ const fetchExamList = async () => {
                         department={examItem.department}
                         semester={examItem.semester}
                         submissionCount={submissionCounts[examItem._id] || 0}
+                        onClick={()=>navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, { state: { examId: examItem._id } })} 
                       />
                       
                     ))}
