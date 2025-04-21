@@ -25,6 +25,7 @@ cloudinary.config({
 const multer = require("multer");
 const exam = require("../model/exam");
 const { default: mongoose } = require("mongoose");
+const student = require("../model/student");
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage });
 
@@ -288,4 +289,32 @@ examRouter.get("/teacher/:examId/answers/count", authTeacher, async (req, res) =
     });
   }
 });
+
+examRouter.get("/teacher/:examId/answers/submittingstudents", authTeacher, async (req, res) => {
+  try {
+    const { examId } = req.params;
+
+    // Step 1: Get distinct studentIds who submitted answers for the given exam
+    const studentIds = await Answer.distinct("studentId", {
+      examId: new mongoose.Types.ObjectId(examId),
+      
+    });
+
+    // Step 2: Fetch student details based on those IDs
+    const students = await student.find({
+      _id: { $in: studentIds }
+    }).select("rollNo firstName lastName"); 
+
+    res.status(200).json({
+      message: "Fetched students who submitted answers",
+      data: students
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch students", error: err.message });
+  }
+});
+
+
+
 module.exports = examRouter;
