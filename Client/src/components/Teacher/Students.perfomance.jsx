@@ -106,7 +106,7 @@ const fetchExamList = async () => {
                         department={examItem.department}
                         semester={examItem.semester}
                         submissionCount={submissionCounts[examItem._id] || 0}
-                        onClick={()=>navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, { state: { examId: examItem._id ,examName:examItem.examName, subjectName:examItem.subjectName} })} 
+                        onClick={()=>navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, { state: { examId: examItem._id ,examName:examItem.examName, subjectName:examItem.subjectName,marks:examItem.totalMarks} })} 
                       />
                       
                     ))}

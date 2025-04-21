@@ -294,20 +294,50 @@ examRouter.get("/teacher/:examId/answers/submittingstudents", authTeacher, async
   try {
     const { examId } = req.params;
 
-    // Step 1: Get distinct studentIds who submitted answers for the given exam
-    const studentIds = await Answer.distinct("studentId", {
-      examId: new mongoose.Types.ObjectId(examId),
-      
-    });
+    // Step 1: Get all answers for the given exam
+    const answers = await Answer.find({ examId: new mongoose.Types.ObjectId(examId) });
 
-    // Step 2: Fetch student details based on those IDs
+    // Step 2: Group answers by studentId
+    const studentMap = {};
+
+    for (let ans of answers) {
+      const sid = ans.studentId.toString();
+      if (!studentMap[sid]) {
+        studentMap[sid] = {
+          totalMarks: 0,
+          totalAnswers: 0,
+          evaluatedAnswers: 0
+        };
+      }
+      studentMap[sid].totalAnswers += 1;
+      if (ans.evaluated) {
+        studentMap[sid].evaluatedAnswers += 1;
+        studentMap[sid].totalMarks += ans.marksObtained || 0;
+      }
+    }
+
+    // Step 3: Get unique student IDs
+    const studentIds = Object.keys(studentMap);
+
+    // Step 4: Fetch student details
     const students = await student.find({
       _id: { $in: studentIds }
-    }).select("rollNo firstName lastName"); 
+    }).select("rollNo firstName lastName").lean();
+
+    // Step 5: Merge evaluation info into student data
+    const result = students.map(stu => {
+      const sid = stu._id.toString();
+      const data = studentMap[sid];
+      return {
+        ...stu,
+        evaluated: data.totalAnswers === data.evaluatedAnswers,
+        marksObtained: data.totalMarks
+      };
+    });
 
     res.status(200).json({
       message: "Fetched students who submitted answers",
-      data: students
+      data: result
     });
 
   } catch (err) {
@@ -315,6 +345,61 @@ examRouter.get("/teacher/:examId/answers/submittingstudents", authTeacher, async
   }
 });
 
+examRouter.post("/teacher/answer/:answerId/evaluate", authTeacher, async (req, res) => {
+  try {
+    const { answerId } = req.params;
+    const { marksObtained, evaluated } = req.body;
+
+    if (typeof marksObtained !== 'number' || marksObtained < 0) {
+      return res.status(400).json({ message: "Invalid marks value" });
+    }
+
+    const updatedAnswer = await Answer.findByIdAndUpdate(
+      answerId,
+      {
+        $set: {
+          marksObtained,
+          evaluated
+        }
+      },
+      { new: true }
+    );
+
+    if (!updatedAnswer) {
+      return res.status(404).json({ message: "Answer not found" });
+    }
+
+    res.status(200).json({
+      message: "Answer evaluated successfully",
+      data: updatedAnswer
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error evaluating answer", error: err.message });
+  }
+});
+
+// Route: GET /teacher/:examId/student/:studentId/answers
+examRouter.get("/teacher/:examId/student/:studentId/answers", authTeacher, async (req, res) => {
+  try {
+    const { examId, studentId } = req.params;
+
+    const answers = await Answer.find({
+      examId,
+      studentId
+    });
+
+    if (!answers || answers.length === 0) {
+      return res.status(404).json({ message: "No answers found for this student and exam." });
+    }
+
+    res.status(200).json({
+      message: "Answers fetched successfully",
+      data: answers
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching answers", error: err.message });
+  }
+});
 
 
 module.exports = examRouter;

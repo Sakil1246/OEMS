@@ -24,6 +24,7 @@ import EditExam from "./components/Teacher/Edit.Exam";
 import Editexampaper from "./components/Teacher/Edit.exam.paper";
 import Studentsperfomance from "./components/Teacher/Students.perfomance";
 import Answersubmittingstudents from "./components/Teacher/Answer.submitting.students.jsx";
+import Answerevaluate from "./components/Teacher/Answer.evaluate.jsx";
 
 function App() {
   const teacher = useSelector((state) => state.teacher);
@@ -66,6 +67,7 @@ function App() {
             <Route path="Editexampaper/:id" element={<Editexampaper/>}/>
             <Route path="studentPerformance" element={<Studentsperfomance/>}/>
             <Route path="teacher/exam/:examId/answers" element={<Answersubmittingstudents />} />
+            <Route path="teacher/answer/evaluate" element={<Answerevaluate />} />
           </Route>}
 
           

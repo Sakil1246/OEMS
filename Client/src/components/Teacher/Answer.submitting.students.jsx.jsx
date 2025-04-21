@@ -7,7 +7,7 @@ const Answersubmittingstudents = () => {
   const [students, setStudents] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId ,examName,subjectName} = location.state;
+  const { examId, examName, subjectName, marks } = location.state;
 
   const fetchStudents = async () => {
     try {
@@ -25,17 +25,17 @@ const Answersubmittingstudents = () => {
   }, []);
 
   const handleEvaluateClick = (studentId) => {
-    // navigate("/evaluate", {
-    //   state: {
-    //     examId,
-    //     studentId,
-    //   }
-    // });
+    navigate("/teacherDashboard/teacher/answer/evaluate", {
+      state: {
+        examId,
+        studentId,
+      }
+    });
   };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold text-center mb-8">{examName+", "+subjectName}</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">{examName + ", " + subjectName}</h1>
       {students.length === 0 ? (
         <p className="text-center text-red-400 text-lg">No submissions yet.</p>
       ) : (
@@ -45,7 +45,10 @@ const Answersubmittingstudents = () => {
               <tr className="bg-green-700 text-white text-left">
                 <th className="py-3 px-6">Roll Number</th>
                 <th className="py-3 px-6">Full Name</th>
-                <th className="py-3 px-6 text-center">Marks Obtained</th>
+                <th className="py-3 px-6 text-center">
+                  Marks Obtained
+                  <span className="text-yellow-300 font-semibold">{` (Out of ${marks})`}</span>
+                </th>
                 <th className="py-3 px-6 text-center">Action</th>
               </tr>
             </thead>
@@ -64,13 +67,12 @@ const Answersubmittingstudents = () => {
                   <td className="py-3 px-6 text-center">
                     <button
                       onClick={() => handleEvaluateClick(student._id)}
-                      className={`px-4 py-2 rounded-md font-medium transition-all duration-200 ${
-                        student.evaluated
+                      className={`px-4 py-2 rounded-md font-medium transition-all duration-200 ${student.evaluated
                           ? "bg-green-600 hover:bg-green-500 text-white"
-                          : "bg-blue-500 hover:bg-blue-400 text-white"
-                      }`}
+                          : "bg-blue-500 hover:bg-blue-700 text-white"
+                        }`}
                     >
-                      {student.evaluated ? "Evaluated" : "Evaluate"}
+                      {student.evaluated ? "✅Evaluated" : "Evaluate"}
                     </button>
                   </td>
                 </tr>
