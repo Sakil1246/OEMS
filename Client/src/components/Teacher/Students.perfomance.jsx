@@ -8,6 +8,11 @@ const Studentsperfomance = () => {
     const teacherId = useSelector((store) => store.teacher._id);
     const [exam, setExam] = useState([]);
     const navigate=useNavigate();
+    const fetchCountSubmit=async()=>{
+        try{
+            const res=await axios.get(`${Basic_URL}teacher/${examId}/answers/count`,{withCredentials:true});
+        }
+    }
     const fetchExamList = async () => {
         try {
             const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
@@ -36,7 +41,7 @@ const Studentsperfomance = () => {
     };
 
     const Card = ({ title,onEditClick, onClick, date, marks, createdAt, department, semester }) => (
-        <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-95 transition-all duration-300 border border-gray-300">
+        <div className="cursor-pointer bg-green-950 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-95 transition-all duration-300 border border-gray-300">
             <div>
                 <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
                 {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}

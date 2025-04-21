@@ -5,7 +5,7 @@ const express = require("express");
 const Exam = require("../model/exam");
 const Question = require("../model/question");
 const Answer = require("../model/answer");
-//const multer = require("multer");
+const { ObjectId } = require("mongodb");
 const cloudinary = require("cloudinary").v2;
 const moment = require("moment-timezone");
 require("dotenv").config();
@@ -24,6 +24,7 @@ cloudinary.config({
 
 const multer = require("multer");
 const exam = require("../model/exam");
+const { default: mongoose } = require("mongoose");
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage });
 
@@ -253,5 +254,35 @@ examRouter.get("/teacher/fetchquestions/:examId",authTeacher,async(req,res)=>{
   }
 })
 
+examRouter.get("/teacher/:examId/answers/count", authTeacher, async (req, res) => {
+  try {
+    const { examId } = req.params;
 
+    const result = await Answer.aggregate([
+      {
+        $match: {
+          examId: new mongoose.Types.ObjectId(examId),
+        }
+      },
+      {
+        $group: {
+          _id: "$studentId"
+        }
+      },
+      {
+        $count: "submittedStudents"
+      }
+    ]);
+
+    const count = result[0]?.submittedStudents || 0;
+
+    res.json({ submittedStudents: count });
+
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to fetch answers count",
+      error: err.message
+    });
+  }
+});
 module.exports = examRouter;
