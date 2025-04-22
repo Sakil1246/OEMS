@@ -17,35 +17,48 @@ const Answerevaluate = () => {
       const res = await axios.get(`${Basic_URL}teacher/${examId}/student/${studentId}/answers`, {
         withCredentials: true,
       });
-
-      const evaluated = res.data.data.map((ans) => {
+  
+      const evaluated = await Promise.all(res.data.data.map(async (ans) => {
         if (
           ans.questionId?.questionType === "MCQ" &&
           ans.selectedOption !== null &&
           ans.selectedOption === ans.questionId.correctOptions
         ) {
+          // Send evaluation to backend
+          await axios.post(`${Basic_URL}teacher/answer/${ans._id}/evaluate`, {
+            marksObtained: ans.questionId.marks || 0,
+            evaluated: true
+          }, { withCredentials: true });
+  
           return { ...ans, marksObtained: ans.questionId.marks || 0, evaluated: true };
+  
         } else if (
           ans.questionId?.questionType === "MCQ" &&
           (ans.selectedOption === null || ans.selectedOption !== ans.questionId.correctOptions)
         ) {
+          await axios.post(`${Basic_URL}teacher/answer/${ans._id}/evaluate`, {
+            marksObtained: 0,
+            evaluated: true
+          }, { withCredentials: true });
+  
           return { ...ans, marksObtained: 0, evaluated: true };
         }
+  
         return ans;
-      });
-
+      }));
+  
       setAnswers(evaluated);
       setTotalMarksObtained(
         evaluated.reduce((sum, ans) => sum + (ans.marksObtained || 0), 0)
       );
-
+  
     } catch (err) {
       console.error("Failed to fetch answers:", err);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleMarksChange = (index, value) => {
     const updated = [...answers];
     updated[index].marksObtained = value;
@@ -116,7 +129,10 @@ const Answerevaluate = () => {
   }, []);
   
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="bg-gray-800  min-h-screen ">
+          <button className='text-white absolute aml-5 mt-3 text-2xl'onClick={()=>navigate(-1)}>⬅️Back</button>
+
+    <div className="max-w-5xl  mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6 text-center text-white">Evaluate Answers</h1>
       <div className="sticky top-0 z-50 bg-slate-200 text-black py-3 px-6 w-fit mx-auto flex items-center justify-center shadow-md text-center font-bold text-lg">
         Total Marks Obtaining: {totalMarksObtained}
@@ -132,7 +148,7 @@ const Answerevaluate = () => {
         <div className="space-y-6">
           {answers.map((ans, index) => (
             <div key={ans._id} className="bg-green-900 text-white p-4 rounded-lg shadow-md border border-gray-600">
-              <p className="mb-1 text-yellow-300 font-semibold">Marks: {ans.questionId?.marks}</p>
+              <p className="mb-1 text-right text-yellow-300 font-semibold">Marks: {ans.questionId?.marks}</p>
               <p className="mb-2 font-semibold text-yellow-300">Question: {ans.questionId?.questionText}</p>
 
               {ans.questionId?.questionImage && (
@@ -219,6 +235,7 @@ const Answerevaluate = () => {
 
         </div>
       )}
+    </div>
     </div>
   );
 };
