@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Basic_URL } from '../../utils/constants';
 
 const Answerevaluate = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { examId, studentId } = location.state;
 
   const [answers, setAnswers] = useState([]);
@@ -12,7 +13,9 @@ const Answerevaluate = () => {
 
   const fetchAnswers = async () => {
     try {
-      const res = await axios.get(`${Basic_URL}teacher/${examId}/student/${studentId}/answers`, { withCredentials: true });
+      const res = await axios.get(`${Basic_URL}teacher/${examId}/student/${studentId}/answers`, {
+        withCredentials: true,
+      });
 
       const evaluated = res.data.data.map((ans) => {
         if (
@@ -21,7 +24,10 @@ const Answerevaluate = () => {
           ans.selectedOption === ans.questionId.correctOptions
         ) {
           return { ...ans, marksObtained: ans.questionId.marks || 0, evaluated: true };
-        } else if (ans.questionId?.questionType === "MCQ" && (ans.selectedOption === null || ans.selectedOption !== ans.questionId.correctOptions)) {
+        } else if (
+          ans.questionId?.questionType === "MCQ" &&
+          (ans.selectedOption === null || ans.selectedOption !== ans.questionId.correctOptions)
+        ) {
           return { ...ans, marksObtained: 0, evaluated: true };
         }
         return ans;
@@ -43,8 +49,8 @@ const Answerevaluate = () => {
 
   const handleEvaluate = async (answerId, marks, index) => {
     const ans = answers[index];
-
     let finalMarks = marks;
+
     if (
       ans.questionId?.questionType === "MCQ" &&
       (ans.selectedOption === null || ans.selectedOption !== ans.questionId.correctOptions)
@@ -81,11 +87,29 @@ const Answerevaluate = () => {
 
   const handleResetAll = async () => {
     try {
-      await axios.post(`${Basic_URL}teacher/${examId}/student/${studentId}/reset-evaluation`, {}, { withCredentials: true });
+      await axios.post(`${Basic_URL}teacher/${examId}/student/${studentId}/reset-evaluation`, {}, {
+        withCredentials: true,
+      });
       const updated = answers.map((a) => ({ ...a, evaluated: false, marksObtained: 0 }));
       setAnswers(updated);
     } catch (err) {
       console.error("Failed to reset all evaluations:", err);
+    }
+  };
+
+  const handleSaveEvaluation = async () => {
+    try {
+      const totalMarks = answers.reduce((sum, ans) => sum + (ans.marksObtained || 0), 0);
+      await axios.post(`${Basic_URL}teacher/${examId}/student/${studentId}/finalize-evaluation`, {
+        marksObtained: totalMarks,
+        evaluated: true,
+      }, { withCredentials: true });
+
+      alert("Evaluation saved successfully!");
+      navigate(-1); 
+    } catch (err) {
+      console.error("Error saving evaluation:", err);
+      alert("Failed to save evaluation.");
     }
   };
 
@@ -128,7 +152,7 @@ const Answerevaluate = () => {
                   <p className="font-semibold">Options:</p>
                   <ul className="list-disc pl-5 text-white">
                     {ans.questionId.options.map((opt, i) => (
-                      <li key={i} className="text-white">
+                      <li key={i}>
                         {opt.format === "Text" ? opt.text : <img src={opt.image} alt={`Option ${i}`} className="w-32" />}
                       </li>
                     ))}
@@ -183,6 +207,16 @@ const Answerevaluate = () => {
               )}
             </div>
           ))}
+
+          {/* Save Evaluation Button */}
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={handleSaveEvaluation}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded"
+            >
+              Save Evaluation
+            </button>
+          </div>
         </div>
       )}
     </div>

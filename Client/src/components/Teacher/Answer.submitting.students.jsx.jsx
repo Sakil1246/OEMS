@@ -21,7 +21,18 @@ const Answersubmittingstudents = () => {
   };
 
   useEffect(() => {
-    fetchStudents();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchStudents();
+      }
+    };
+
+    fetchStudents(); // Initial fetch
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   const handleEvaluateClick = (studentId) => {

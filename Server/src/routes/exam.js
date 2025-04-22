@@ -26,6 +26,8 @@ const multer = require("multer");
 const exam = require("../model/exam");
 const { default: mongoose } = require("mongoose");
 const student = require("../model/student");
+const answer = require("../model/answer");
+const examResult = require("../model/examResult");
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage });
 
@@ -431,7 +433,6 @@ examRouter.post('/teacher/answer/:answerId/reset', async (req, res) => {
   }
 });
 
-// Reset all answers for a student in an exam
 examRouter.post('/teacher/:examId/student/:studentId/reset-evaluation', async (req, res) => {
   const { examId, studentId } = req.params;
 
@@ -449,5 +450,57 @@ examRouter.post('/teacher/:examId/student/:studentId/reset-evaluation', async (r
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+examRouter.post('/teacher/:examId/student/:studentId/finalize-evaluation', async (req, res) => {
+  const { examId, studentId } = req.params;
+
+  try {
+    const unevaluatedAnswers = await answer.find({
+      examId,
+      studentId,
+      evaluated: false
+    });
+
+    if (unevaluatedAnswers.length > 0) {
+      return res.status(400).json({
+        message: 'Not all answers are evaluated. Please evaluate all answers before finalizing.'
+      });
+    }
+
+    const evaluatedAnswers = await answer.find({
+      examId,
+      studentId,
+      evaluated: true
+    });
+
+    const totalScore = evaluatedAnswers.reduce((sum, ans) => sum + (ans.marksObtained || 0), 0);
+
+    const answersForResult = evaluatedAnswers.map(ans => ({
+      questionId: ans.questionId,
+      selectedOption: ans.selectedOption,
+      subjectiveAnswer: ans.answerText || ""
+    }));
+
+    const result = await examResult.findOneAndUpdate(
+      { examId, studentId },
+      {
+        answers: answersForResult,
+        score: totalScore,
+        evaluated: true
+      },
+      { upsert: true, new: true }
+    );
+
+    res.status(200).json({
+      message: 'Evaluation finalized successfully.',
+      data: result
+    });
+
+  } catch (error) {
+    console.error('Error finalizing evaluation:', error);
+    res.status(500).json({ message: 'Server error while finalizing evaluation.' });
+  }
+});
+
 
 module.exports = examRouter;
