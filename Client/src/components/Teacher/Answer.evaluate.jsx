@@ -21,6 +21,8 @@ const Answerevaluate = () => {
           ans.selectedOption === ans.questionId.correctOptions
         ) {
           return { ...ans, marksObtained: ans.questionId.marks || 0, evaluated: true };
+        } else if (ans.questionId?.questionType === "MCQ" && (ans.selectedOption === null || ans.selectedOption !== ans.questionId.correctOptions)) {
+          return { ...ans, marksObtained: 0, evaluated: true };
         }
         return ans;
       });
@@ -114,7 +116,12 @@ const Answerevaluate = () => {
         <div className="space-y-6">
           {answers.map((ans, index) => (
             <div key={ans._id} className="bg-green-900 text-white p-4 rounded-lg shadow-md border border-gray-600">
+              <p className="mb-1 text-yellow-300 font-semibold">Marks: {ans.questionId?.marks}</p>
               <p className="mb-2 font-semibold text-yellow-300">Question: {ans.questionId?.questionText}</p>
+
+              {ans.questionId?.questionImage && (
+                <img src={ans.questionId.questionImage} alt="Question" className="mb-2 w-60 rounded border border-gray-400" />
+              )}
 
               {ans.questionId?.options?.length > 0 && (
                 <div className="mb-2">
