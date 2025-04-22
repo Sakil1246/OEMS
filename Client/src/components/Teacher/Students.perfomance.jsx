@@ -8,35 +8,35 @@ const Studentsperfomance = () => {
     const teacherId = useSelector((store) => store.teacher._id);
     const [exam, setExam] = useState([]);
     const [submissionCounts, setSubmissionCounts] = useState({});
-    const navigate=useNavigate();
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
     const fetchCountSubmit = async (examId) => {
-    try {
-        const res = await axios.get(`${Basic_URL}teacher/${examId}/answers/count`, { withCredentials: true });
-        const count = res?.data.data;
+        try {
+            const res = await axios.get(`${Basic_URL}teacher/${examId}/answers/count`, { withCredentials: true });
+            const count = res?.data.data;
+            setSubmissionCounts(prev => ({
+                ...prev,
+                [examId]: count
+            }));
+        } catch (err) {
+            console.error(`Failed to fetch submission count for exam ${examId}:`, err);
+        }
+    };
 
-        setSubmissionCounts(prev => ({
-            ...prev,
-            [examId]: count
-        }));
-    } catch (err) {
-        console.error(`Failed to fetch submission count for exam ${examId}:`, err);
-    }
-};
-
-const fetchExamList = async () => {
-    try {
-        const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
-        const exams = examlist.data.data;
-        setExam(exams);
-        exams.forEach(examItem => {
-            fetchCountSubmit(examItem._id);
-        });
-
-    } catch (err) {
-        console.error("Failed to fetch exam list:", err);
-    }
-};
-
+    const fetchExamList = async () => {
+        try {
+            setLoading(true);
+            const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
+            const exams = examlist.data.data;
+            setExam(exams);
+            await Promise.all(exams.map(examItem => fetchCountSubmit(examItem._id)));
+        } catch (err) {
+            console.error("Failed to fetch exam list:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         fetchExamList();
@@ -58,38 +58,39 @@ const fetchExamList = async () => {
 
     const Card = ({ title, onClick, date, marks, createdAt, department, semester, submissionCount }) => (
         <div className="cursor-pointer bg-green-950 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-95 transition-all duration-300 border border-gray-300">
-          <div>
-            <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
-            {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}
-            <p className="text-gray-300 text-lg font-medium mt-2">{"Marks: " + marks}</p>
-            <p className="text-gray-300 text-lg font-medium mt-2">{"Exam Date: " + date}</p>
-            <p className="text-gray-300 text-lg font-medium mt-2">
-              {"Department: " + department + ", " + semester +
-                (semester === 1 ? "st" : semester === 2 ? "nd" : semester === 3 ? "rd" : "th") + " sem"}
-            </p>
-            <p className="text-yellow-300 text-lg font-medium mt-2">
-              {"Number of student attempted: " + submissionCount}
-            </p>
-          </div>
-          <div>
-            <div className='flex justify-end'>
-              <p className="text-white font-semibold px-4 py-2 mt-4 rounded-lg">
-                {"Created At: " + formatDateToIST(createdAt)}
-              </p>
+            <div>
+                <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
+                {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}
+                <p className="text-gray-300 text-lg font-medium mt-2">{"Marks: " + marks}</p>
+                <p className="text-gray-300 text-lg font-medium mt-2">{"Exam Date: " + date}</p>
+                <p className="text-gray-300 text-lg font-medium mt-2">
+                    {"Department: " + department + ", " + semester +
+                        (semester === 1 ? "st" : semester === 2 ? "nd" : semester === 3 ? "rd" : "th") + " sem"}
+                </p>
+                <p className="text-yellow-300 text-lg font-medium mt-2">
+                    {"Number of student attempted: " + submissionCount}
+                </p>
             </div>
-            <div className='flex justify-end'>
-              <button className="bg-blue-500 text-white font-semibold hover:bg-blue-400 px-4 py-2 mt-4 rounded-lg" onClick={onClick} >
-                View Submission
-              </button>
+            <div>
+                <div className='flex justify-end'>
+                    <p className="text-white font-semibold px-4 py-2 mt-4 rounded-lg">
+                        {"Created At: " + formatDateToIST(createdAt)}
+                    </p>
+                </div>
+                <div className='flex justify-end'>
+                    <button className="bg-blue-500 text-white font-semibold hover:bg-blue-400 px-4 py-2 mt-4 rounded-lg" onClick={onClick} >
+                        View Submission
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
-      );
-      
+    );
 
     return (
         <div className='flex justify-center items-center flex-col'>
-            {exam?.length === 0 ? (
+            {loading ? (
+                <p className="text-2xl font-semibold text-white mt-8">Loading exams...</p>
+            ) : exam?.length === 0 ? (
                 <h1 className='text-2xl font-bold mt-5 text-center text-red-500'>
                     No exam found 
                 </h1>
@@ -98,17 +99,23 @@ const fetchExamList = async () => {
                     <h1 className='text-2xl font-bold mt-5 text-white text-center w-full'>The list of exams you have created</h1>
                     {exam.map((examItem) => (
                         <Card
-                        key={examItem._id}
-                        title={[examItem.examName, examItem.subjectName]}
-                        date={examItem.startTime}
-                        marks={examItem.totalMarks}
-                        createdAt={examItem.createdAt}
-                        department={examItem.department}
-                        semester={examItem.semester}
-                        submissionCount={submissionCounts[examItem._id] || 0}
-                        onClick={()=>navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, { state: { examId: examItem._id ,examName:examItem.examName, subjectName:examItem.subjectName,marks:examItem.totalMarks} })} 
-                      />
-                      
+                            key={examItem._id}
+                            title={[examItem.examName, examItem.subjectName]}
+                            date={examItem.startTime}
+                            marks={examItem.totalMarks}
+                            createdAt={examItem.createdAt}
+                            department={examItem.department}
+                            semester={examItem.semester}
+                            submissionCount={submissionCounts[examItem._id] || 0}
+                            onClick={() => navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, {
+                                state: {
+                                    examId: examItem._id,
+                                    examName: examItem.examName,
+                                    subjectName: examItem.subjectName,
+                                    marks: examItem.totalMarks
+                                }
+                            })}
+                        />
                     ))}
                 </div>
             )}
