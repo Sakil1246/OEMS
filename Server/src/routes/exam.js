@@ -378,28 +378,76 @@ examRouter.post("/teacher/answer/:answerId/evaluate", authTeacher, async (req, r
   }
 });
 
-// Route: GET /teacher/:examId/student/:studentId/answers
-examRouter.get("/teacher/:examId/student/:studentId/answers", authTeacher, async (req, res) => {
+examRouter.get('/teacher/:examId/student/:studentId/answers', async (req, res) => {
+  const { examId, studentId } = req.params;
+
   try {
-    const { examId, studentId } = req.params;
+    const answers = await Answer.find({ examId, studentId })
+      .populate({
+        path: 'questionId',
+        model: 'Question'
+      });
 
-    const answers = await Answer.find({
-      examId,
-      studentId
+    const evaluatedAnswers = answers.map(ans => {
+      const q = ans.questionId;
+      const isAutoEvaluated = (
+        q?.questionType === 'MCQ' &&
+        q.correctOptions === parseInt(ans.selectedOption) &&
+        !ans.evaluated
+      );
+
+      if (isAutoEvaluated) {
+        ans.marksObtained = q.marks;
+        ans.evaluated = true;
+        ans.save(); 
+      }
+
+      return ans;
     });
 
-    if (!answers || answers.length === 0) {
-      return res.status(404).json({ message: "No answers found for this student and exam." });
-    }
-
-    res.status(200).json({
-      message: "Answers fetched successfully",
-      data: answers
-    });
+    res.status(200).json({ data: evaluatedAnswers });
   } catch (err) {
-    res.status(500).json({ message: "Error fetching answers", error: err.message });
+    console.error("Error fetching answers with questions:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
+
+examRouter.post('/teacher/answer/:answerId/reset', async (req, res) => {
+  const { answerId } = req.params;
+
+  try {
+    const answer = await Answer.findById(answerId);
+    if (!answer) return res.status(404).json({ message: 'Answer not found' });
+
+    answer.evaluated = false;
+    answer.marksObtained = 0;
+
+    await answer.save();
+    res.status(200).json({ message: 'Answer evaluation reset successfully' });
+  } catch (err) {
+    console.error('Error resetting answer:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Reset all answers for a student in an exam
+examRouter.post('/teacher/:examId/student/:studentId/reset-evaluation', async (req, res) => {
+  const { examId, studentId } = req.params;
+
+  try {
+    const result = await Answer.updateMany(
+      { examId, studentId },
+      { $set: { evaluated: false, marksObtained: 0 } }
+    );
+
+    res.status(200).json({
+      message: `Evaluation reset for ${result.modifiedCount} answers.`,
+    });
+  } catch (err) {
+    console.error('Error resetting evaluations:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = examRouter;
