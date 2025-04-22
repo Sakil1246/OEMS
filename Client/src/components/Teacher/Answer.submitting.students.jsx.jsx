@@ -27,7 +27,7 @@ const Answersubmittingstudents = () => {
       }
     };
 
-    fetchStudents(); // Initial fetch
+    fetchStudents();
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
@@ -40,6 +40,9 @@ const Answersubmittingstudents = () => {
       state: {
         examId,
         studentId,
+        examName,
+        subjectName,
+        rollNo: students.find(student => student._id === studentId)?.rollNo,
       }
     });
   };
@@ -66,7 +69,7 @@ const Answersubmittingstudents = () => {
             <tbody>
               {students.map(student => (
                 <tr key={student._id} className="border-b border-gray-700 hover:bg-gray-700 transition-all">
-                  <td className="py-3 px-6">{student.rollNo}</td>
+                  <td className="py-3 px-6 uppercase">{student.rollNo}</td>
                   <td className="py-3 px-6">{student.firstName} {student.lastName}</td>
                   <td className="py-3 px-6 text-center">
                     {student.evaluated ? (
@@ -79,8 +82,8 @@ const Answersubmittingstudents = () => {
                     <button
                       onClick={() => handleEvaluateClick(student._id)}
                       className={`px-4 py-2 rounded-md font-medium transition-all duration-200 ${student.evaluated
-                          ? "bg-green-600 hover:bg-green-500 text-white"
-                          : "bg-blue-500 hover:bg-blue-700 text-white"
+                        ? "bg-green-600 hover:bg-green-500 text-white"
+                        : "bg-blue-500 hover:bg-blue-700 text-white"
                         }`}
                     >
                       {student.evaluated ? "✅Evaluated" : "Evaluate"}

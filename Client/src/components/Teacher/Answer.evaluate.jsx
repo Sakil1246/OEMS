@@ -6,7 +6,8 @@ import { Basic_URL } from '../../utils/constants';
 const Answerevaluate = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId, studentId } = location.state;
+  const { examId, studentId, examName, subjectName, rollNo } = location.state;
+  const [totalMarksObtained, setTotalMarksObtained] = useState(0);
 
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,10 @@ const Answerevaluate = () => {
       });
 
       setAnswers(evaluated);
+      setTotalMarksObtained(
+        evaluated.reduce((sum, ans) => sum + (ans.marksObtained || 0), 0)
+      );
+
     } catch (err) {
       console.error("Failed to fetch answers:", err);
     } finally {
@@ -45,33 +50,26 @@ const Answerevaluate = () => {
     const updated = [...answers];
     updated[index].marksObtained = value;
     setAnswers(updated);
+    setTotalMarksObtained(updated.reduce((sum, ans) => sum + (ans.marksObtained || 0), 0));
   };
 
+
   const handleEvaluate = async (answerId, marks, index) => {
-    const ans = answers[index];
-    let finalMarks = marks;
-
-    if (
-      ans.questionId?.questionType === "MCQ" &&
-      (ans.selectedOption === null || ans.selectedOption !== ans.questionId.correctOptions)
-    ) {
-      finalMarks = 0;
-    }
-
     try {
       await axios.post(`${Basic_URL}teacher/answer/${answerId}/evaluate`, {
-        marksObtained: finalMarks,
+        marksObtained: marks,
         evaluated: true
       }, { withCredentials: true });
 
       const updated = [...answers];
       updated[index].evaluated = true;
-      updated[index].marksObtained = finalMarks;
+      updated[index].marksObtained = marks;
       setAnswers(updated);
     } catch (err) {
       console.error("Evaluation failed:", err);
     }
   };
+
 
   const handleResetSingle = async (answerId, index) => {
     try {
@@ -106,7 +104,7 @@ const Answerevaluate = () => {
       }, { withCredentials: true });
 
       alert("Evaluation saved successfully!");
-      navigate(-1); 
+      navigate(-1);
     } catch (err) {
       console.error("Error saving evaluation:", err);
       alert("Failed to save evaluation.");
@@ -116,22 +114,16 @@ const Answerevaluate = () => {
   useEffect(() => {
     fetchAnswers();
   }, []);
-
+  
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6 text-center text-white">Evaluate Answers</h1>
+      <div className="sticky top-0 z-50 bg-slate-200 text-black py-3 px-6 w-fit mx-auto flex items-center justify-center shadow-md text-center font-bold text-lg">
+        Total Marks Obtaining: {totalMarksObtained}
+      </div>
 
-      {answers.length !== 0 && (
-        <div className="flex justify-center mb-6">
-          <button
-            onClick={handleResetAll}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded"
-          >
-            Reset Whole Evaluation
-          </button>
-        </div>
-      )}
-
+      <h1 className='text-white text-2xl '>{examName + ", " + subjectName}</h1>
+      <h1 className='text-white text-2xl uppercase mb-4 '>{rollNo}</h1>
       {loading ? (
         <p className="text-center text-gray-300">Loading answers...</p>
       ) : answers.length === 0 ? (
@@ -208,15 +200,23 @@ const Answerevaluate = () => {
             </div>
           ))}
 
-          {/* Save Evaluation Button */}
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={handleSaveEvaluation}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded"
-            >
-              Save Evaluation
-            </button>
-          </div>
+          {answers.length !== 0 && (
+            <div className="flex justify-center items-center gap-6 mt-8">
+              <button
+                onClick={handleResetAll}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded shadow"
+              >
+                Reset Whole Evaluation
+              </button>
+              <button
+                onClick={handleSaveEvaluation}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow"
+              >
+                Save Evaluation
+              </button>
+            </div>
+          )}
+
         </div>
       )}
     </div>
