@@ -10,7 +10,10 @@ const ViewResult = () => {
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [batchmateScores, setBatchmateScores] = useState(null);
+  const [activeView, setActiveView] = useState('score');  // State to toggle views
 
+  // Fetch result details
   const fetchResultDetails = async () => {
     try {
       const res = await axios.get(`${Basic_URL}exam/${examId}/result-details`, {
@@ -24,12 +27,32 @@ const ViewResult = () => {
     }
   };
 
+  // Fetch batchmate scores
+  const fetchBatchmateScores = async () => {
+    try {
+      const res = await axios.get(`${Basic_URL}exam/${examId}/batchmate-scores`, {
+        withCredentials: true
+      });
+      setBatchmateScores(res.data.data);
+    } catch (err) {
+      console.error("Error fetching batchmate scores:", err);
+    }
+  };
+
   useEffect(() => {
     fetchResultDetails();
   }, []);
 
   const renderCorrectOptions = (options) => {
     return Array.isArray(options) ? options.join(", ") : options;
+  };
+
+  // Handle view change (either 'answers' or 'batchmates')
+  const handleViewChange = (viewType) => {
+    setActiveView(viewType);
+    if (viewType === 'batchmates' && !batchmateScores) {
+      fetchBatchmateScores();
+    }
   };
 
   return (
@@ -48,9 +71,13 @@ const ViewResult = () => {
           <p className="text-center text-red-400 mt-6">Result not found.</p>
         ) : (
           <>
-            <div className="text-center text-xl font-semibold mt-4 mb-4">
-              <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
-            </div>
+            {/* Show total score */}
+            {activeView === 'score' && (
+              <div className="text-center text-xl font-semibold mt-4 mb-4">
+                <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
+              </div>
+            )}
+
             <div className="text-center mb-6 text-sm">
               Status: {result.evaluated ? (
                 <span className="text-green-500 font-medium">✅ Evaluated</span>
@@ -59,11 +86,30 @@ const ViewResult = () => {
               )}
             </div>
 
-            {result.answers?.length > 0 ? (
+            {/* Buttons to toggle between views */}
+            <div className="text-center mb-4">
+              <button
+                className={`bg-blue-500 text-white py-2 px-4 rounded mr-4 ${activeView === 'answers' ? 'bg-blue-700' : ''}`}
+                onClick={() => handleViewChange('answers')}
+              >
+                See Your Answer Sheet
+              </button>
+              <button
+                className={`bg-green-500 text-white py-2 px-4 rounded ${activeView === 'batchmates' ? 'bg-green-700' : ''}`}
+                onClick={() => handleViewChange('batchmates')}
+              >
+                See Your Batchmate Scores
+              </button>
+            </div>
+
+            {/* Show the answers sheet */}
+            {activeView === 'answers' && (
               <div className="space-y-5">
                 {result.answers.map((ans, idx) => (
                   <div key={idx} className="bg-gray-700 rounded-lg p-4 shadow-md">
-                    <div className="text-yellow-300 font-medium mb-1">Q{idx + 1}: {ans.questionId?.questionText}</div>
+                    <div className="text-yellow-300 font-medium mb-1">
+                      Q{idx + 1}: {ans.questionId?.questionText}
+                    </div>
 
                     {ans.questionId?.questionImage && (
                       <img
@@ -95,11 +141,39 @@ const ViewResult = () => {
                         <span className="font-medium">Written Answer:</span> {ans.subjectiveAnswer}
                       </p>
                     )}
+
+                    <div className="text-right mt-3">
+                      <span className="text-white text-sm font-medium bg-gray-600 px-3 py-1 rounded">
+                        Marks: {ans.marksObtained ?? 0} / {ans.questionId?.marks ?? "?"}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-center text-red-400 text-sm">No answers submitted.</p>
+            )}
+
+            {/* Show batchmate scores */}
+            {activeView === 'batchmates' && batchmateScores && (
+              <div className="overflow-x-auto mt-4">
+                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden bg-gray-800">
+                  <table className="min-w-full table-auto text-left text-sm text-gray-400">
+                    <thead className="bg-gray-600">
+                      <tr>
+                        <th className="py-2 px-4 font-semibold">Roll No</th>
+                        <th className="py-2 px-4 font-semibold">Marks Obtained</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {batchmateScores.map((batchmate, idx) => (
+                        <tr key={idx} className="hover:bg-gray-700">
+                          <td className="py-2 px-4">{batchmate.rollNo}</td>
+                          <td className="py-2 px-4">{batchmate.score}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </>
         )}

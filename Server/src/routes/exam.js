@@ -525,7 +525,7 @@ examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => 
     const result = await examResult.findOne({ studentId, examId })
       .populate({
         path: 'answers.questionId',
-        select: 'questionText questionImage questionType correctOptions'
+        select: 'questionText questionImage questionType correctOptions marks '
       });
 
     if (!result) {
@@ -562,5 +562,25 @@ examRouter.post('/teacher/update-results', authTeacher, async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error." });
   }
 });
+
+
+examRouter.get('/exam/:examId/batchmate-scores', authStudent, async (req, res) => {
+  try {
+    const { examId } = req.params;
+
+    const results = await examResult.find({ examId }).populate('studentId', 'rollNo');
+    
+    const batchmateScores = results.map(result => ({
+      rollNo: result.studentId.rollNo,
+      score: result.score
+    }));
+
+    return res.status(200).json({ success: true, data: batchmateScores });
+  } catch (error) {
+    console.error("Error fetching batchmate scores:", error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 
 module.exports = examRouter;

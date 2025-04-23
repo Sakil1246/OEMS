@@ -13,19 +13,16 @@ const examResultSchema = new mongoose.Schema({
   },
   answers: [
     {
-      questionId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Question",
-        required: true
-      },
-      selectedOption: { type: Number },  // For MCQ/MSQ
-      subjectiveAnswer: { type: String } // For subjective questions
-      // You could also add per-question marks here if needed in future
+      questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true },
+      selectedOption: { type: Number },
+      subjectiveAnswer: { type: String },
+      marksObtained: { type: Number, default: 0 } // ✅ Add this
     }
   ],
+  
   score: {
     type: Number,
-    default: 0 // Ensures safe updates from API
+    default: 0
   },
   evaluated: {
     type: Boolean,
