@@ -25,6 +25,7 @@ import Editexampaper from "./components/Teacher/Edit.exam.paper";
 import Studentsperfomance from "./components/Teacher/Students.perfomance";
 import Answersubmittingstudents from "./components/Teacher/Answer.submitting.students.jsx";
 import Answerevaluate from "./components/Teacher/Answer.evaluate.jsx";
+import ViewResult from "./components/Student/View.Result.jsx";
 
 function App() {
   const teacher = useSelector((state) => state.teacher);
@@ -47,7 +48,7 @@ function App() {
               <Route path="missedExams" element={<MissedExams/>} />
               <Route path="progress" element={<Progress />} />
               <Route path="notifications" element={<Notifications/>} />
-
+              <Route path="progress/view-result" element={<ViewResult />} />
             </Route>
 
 

@@ -502,5 +502,41 @@ examRouter.post('/teacher/:examId/student/:studentId/finalize-evaluation', async
   }
 });
 
+examRouter.get("/student/:studentId/attempted-exams", async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    const attemptedExams = await examResult.find({ studentId }).populate("examId");
+
+    const exams = attemptedExams.map(result => result.examId);
+
+    res.status(200).json({ success: true, data: exams });
+  } catch (err) {
+    console.error("Error fetching attempted exams:", err);
+    res.status(500).json({ success: false, message: "Failed to fetch attempted exams." });
+  }
+});
+
+examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => {
+  try {
+    const studentId = req.user._id;
+    const { examId } = req.params;
+
+    const result = await examResult.findOne({ studentId, examId })
+      .populate({
+        path: 'answers.questionId',
+        select: 'questionText questionImage questionType correctOptions',
+      });
+
+    if (!result) {
+      return res.status(404).json({ message: "Result not found for this exam." });
+    }
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    console.error('Error fetching result details:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
 module.exports = examRouter;
