@@ -6,14 +6,14 @@ import { Basic_URL } from '../../utils/constants';
 const ViewResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId, examName, subjectName } = location.state;
+  const { examId, examName, subject} = location.state;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [batchmateScores, setBatchmateScores] = useState(null);
-  const [activeView, setActiveView] = useState('score');  // State to toggle views
+  const [activeView, setActiveView] = useState('score');  
 
-  // Fetch result details
+  
   const fetchResultDetails = async () => {
     try {
       const res = await axios.get(`${Basic_URL}exam/${examId}/result-details`, {
@@ -27,7 +27,7 @@ const ViewResult = () => {
     }
   };
 
-  // Fetch batchmate scores
+  
   const fetchBatchmateScores = async () => {
     try {
       const res = await axios.get(`${Basic_URL}exam/${examId}/batchmate-scores`, {
@@ -47,7 +47,7 @@ const ViewResult = () => {
     return Array.isArray(options) ? options.join(", ") : options;
   };
 
-  // Handle view change (either 'answers' or 'batchmates')
+
   const handleViewChange = (viewType) => {
     setActiveView(viewType);
     if (viewType === 'batchmates' && !batchmateScores) {
@@ -63,7 +63,7 @@ const ViewResult = () => {
 
       <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
         <h2 className="text-3xl font-bold text-center mb-2 text-white">{examName}</h2>
-        <p className="text-center text-lg text-orange-300 mb-2">{subjectName}</p>
+        <p className="text-center text-xl text-orange-300 mb-2">{"Subject: "+subject}</p>
 
         {loading ? (
           <p className="text-center text-blue-300 text-lg mt-6">Loading result details...</p>
@@ -71,7 +71,7 @@ const ViewResult = () => {
           <p className="text-center text-red-400 mt-6">Result not found.</p>
         ) : (
           <>
-            {/* Show total score */}
+            
             {activeView === 'score' && (
               <div className="text-center text-xl font-semibold mt-4 mb-4">
                 <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
@@ -86,7 +86,7 @@ const ViewResult = () => {
               )}
             </div>
 
-            {/* Buttons to toggle between views */}
+           
             <div className="text-center mb-4">
               <button
                 className={`bg-blue-500 text-white py-2 px-4 rounded mr-4 ${activeView === 'answers' ? 'bg-blue-700' : ''}`}
@@ -102,7 +102,7 @@ const ViewResult = () => {
               </button>
             </div>
 
-            {/* Show the answers sheet */}
+            
             {activeView === 'answers' && (
               <div className="space-y-5">
                 {result.answers.map((ans, idx) => (
@@ -152,22 +152,22 @@ const ViewResult = () => {
               </div>
             )}
 
-            {/* Show batchmate scores */}
+
             {activeView === 'batchmates' && batchmateScores && (
               <div className="overflow-x-auto mt-4">
                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden bg-gray-800">
-                  <table className="min-w-full table-auto text-left text-sm text-gray-400">
-                    <thead className="bg-gray-600">
+                  <table className="min-w-full table-auto text-left text-sm text-gray-900">
+                    <thead className="bg-blue-500">
                       <tr>
-                        <th className="py-2 px-4 font-semibold">Roll No</th>
-                        <th className="py-2 px-4 font-semibold">Marks Obtained</th>
+                        <th className="py-2 px-4 text-white font-semibold ">Roll No</th>
+                        <th className="py-2 px-4 text-white font-semibold">Marks Obtained</th>
                       </tr>
                     </thead>
                     <tbody>
                       {batchmateScores.map((batchmate, idx) => (
                         <tr key={idx} className="hover:bg-gray-700">
-                          <td className="py-2 px-4">{batchmate.rollNo}</td>
-                          <td className="py-2 px-4">{batchmate.score}</td>
+                          <td className="py-2 px-4 text-white uppercase">{batchmate.rollNo}</td>
+                          <td className="py-2 px-4 text-white">{batchmate.score}</td>
                         </tr>
                       ))}
                     </tbody>

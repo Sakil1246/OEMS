@@ -35,7 +35,7 @@ const Progress = () => {
     
       <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-bold text-center text-orange-400 mb-10">
-          Your Exam Progress
+          The list of exam you have attempted
         </h1>
 
         {loading ? (
