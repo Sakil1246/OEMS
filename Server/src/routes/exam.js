@@ -519,23 +519,47 @@ examRouter.get("/student/:studentId/attempted-exams", async (req, res) => {
 
 examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => {
   try {
-    const studentId = req.user._id;
+    const studentId = req.student._id;
     const { examId } = req.params;
 
     const result = await examResult.findOne({ studentId, examId })
       .populate({
         path: 'answers.questionId',
-        select: 'questionText questionImage questionType correctOptions',
+        select: 'questionText questionImage questionType correctOptions'
       });
 
     if (!result) {
-      return res.status(404).json({ message: "Result not found for this exam." });
+      return res.status(404).json({ success: false, message: 'Result not found' });
     }
 
     return res.status(200).json({ success: true, data: result });
   } catch (error) {
-    console.error('Error fetching result details:', error);
+    console.error("Error fetching result:", error);
     return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+examRouter.post('/teacher/update-results', authTeacher, async (req, res) => {
+  try {
+    const { examId, results } = req.body;
+
+    if (!examId || !Array.isArray(results)) {
+      return res.status(400).json({ success: false, message: "Invalid input." });
+    }
+
+    for (const result of results) {
+      const { studentId, marksObtained } = result;
+
+      await examResult.findOneAndUpdate(
+        { studentId, examId },
+        { score: marksObtained, evaluated: true },
+        { new: true }
+      );
+    }
+
+    return res.status(200).json({ success: true, message: "Results updated successfully." });
+  } catch (error) {
+    console.error("Error updating results:", error);
+    return res.status(500).json({ success: false, message: "Server error." });
   }
 });
 

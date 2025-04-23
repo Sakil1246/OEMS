@@ -28,8 +28,11 @@ const Progress = () => {
     fetchAttemptedExams();
   }, [_id]);
 
-  return (
-    <div className="bg-gray-900 text-white min-h-screen py-10 px-4">
+  return (<div className="bg-gray-900 text-white min-h-screen py-10 px-4">
+    <button className="mb-4 absolute text-blue-400 underline" onClick={() => navigate(-1)}>
+        ⬅ Back
+      </button>
+    
       <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-bold text-center text-orange-400 mb-10">
           Your Exam Progress
@@ -47,8 +50,8 @@ const Progress = () => {
                 className="bg-gray-800 rounded-lg shadow-md p-6 border border-gray-700"
               >
                 <h2 className="text-xl font-bold text-blue-300 mb-2">{exam.examName}</h2>
-                <p className="text-gray-300">Subject: {exam.subject}</p>
-                <p className="text-gray-400 mb-4">Date: {new Date(exam.date).toLocaleDateString()}</p>
+                <p className="text-gray-300">Subject: {exam.subjectName}</p>
+                <p className="text-gray-400 mb-4">Date: {exam.startTime}</p>
                 <button
                   className="mt-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold"
                   onClick={() =>
@@ -56,7 +59,7 @@ const Progress = () => {
                       state: {
                         examId: exam._id,
                         examName: exam.examName,
-                        subject: exam.subject,
+                        subject: exam.subjectName,
                       },
                     })
                   }
@@ -68,14 +71,7 @@ const Progress = () => {
           </div>
         )}
 
-        <div className="flex justify-center mt-10">
-          <button
-            className="bg-blue-500 hover:bg-blue-600 rounded-lg text-white px-6 py-3"
-            onClick={() => navigate(-1)}
-          >
-            ⬅️ Back to Home Page
-          </button>
-        </div>
+        
       </div>
     </div>
   );

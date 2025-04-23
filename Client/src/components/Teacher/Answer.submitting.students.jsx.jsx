@@ -50,6 +50,26 @@ const Answersubmittingstudents = () => {
       }
     });
   };
+  const handleUpdateResults = async () => {
+    try {
+      const payload = {
+        examId,
+        results: students.map(student => ({
+          studentId: student._id,
+          marksObtained: student.marksObtained || 0,
+        }))
+      };
+
+      const res = await axios.post(`${Basic_URL}teacher/update-results`, payload, {
+        withCredentials: true,
+      });
+
+      alert("Results updated successfully!");
+    } catch (error) {
+      console.error("Error updating results:", error);
+      alert("Failed to update results.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -100,6 +120,17 @@ const Answersubmittingstudents = () => {
               ))}
             </tbody>
           </table>
+          {students.length > 0 && (
+            <div className="text-center mt-6">
+              <button
+                onClick={handleUpdateResults}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-md text-lg font-semibold"
+              >
+                Update Results
+              </button>
+            </div>
+          )}
+
         </div>
       )}
     </div>
