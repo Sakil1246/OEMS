@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Basic_URL } from '../../utils/constants';
+import { motion } from 'framer-motion';
 
 const Progress = () => {
   const student = useSelector((store) => store.student);
@@ -28,32 +29,43 @@ const Progress = () => {
     fetchAttemptedExams();
   }, [_id]);
 
-  return (<div className="bg-gray-900 text-white min-h-screen py-10 px-4">
-    <button className="mb-4 absolute text-blue-400 underline" onClick={() => navigate(-1)}>
-        ⬅ Back
-      </button>
-    
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-orange-400 mb-10">
-          The list of exam you have attempted
+  const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString();
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen px-4 py-10">
+      <div className="max-w-6xl mx-auto">
+        <button
+          className="mb-6 text-blue-400 hover:text-blue-300 transition duration-300 font-medium"
+          onClick={() => navigate(-1)}
+        >
+          ⬅ Back
+        </button>
+
+        <h1 className="text-4xl font-extrabold text-center text-orange-400 mb-12">
+          Your Attempted Exams
         </h1>
 
         {loading ? (
-          <p className="text-center text-gray-300">Loading your exams...</p>
+          <div className="flex justify-center items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-400"></div>
+          </div>
         ) : attemptedExams.length === 0 ? (
-          <p className="text-center text-red-400">You haven't attempted any exams yet.</p>
+          <p className="text-center text-red-400 text-lg font-medium">
+            You haven't attempted any exams yet.
+          </p>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {attemptedExams.map((exam) => (
-              <div
+              <motion.div
                 key={exam._id}
-                className="bg-gray-800 rounded-lg shadow-md p-6 border border-gray-700"
+                className="bg-gray-800 hover:shadow-xl transition-all border border-gray-700 rounded-2xl p-6"
+                whileHover={{ scale: 1.03 }}
               >
-                <h2 className="text-xl font-bold text-blue-300 mb-2">{exam.examName}</h2>
-                <p className="text-gray-300">Subject: {exam.subjectName}</p>
+                <h2 className="text-2xl font-bold text-blue-300 mb-1">{exam.examName}</h2>
+                <p className="text-gray-300">Subject: <span className="font-medium text-white">{exam.subjectName}</span></p>
                 <p className="text-gray-400 mb-4">Date: {exam.startTime}</p>
                 <button
-                  className="mt-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold"
+                  className="mt-4 w-full bg-green-600 hover:bg-green-700 transition-all py-2 rounded-xl text-white font-semibold"
                   onClick={() =>
                     navigate('/studentdashboard/progress/view-result', {
                       state: {
@@ -66,12 +78,10 @@ const Progress = () => {
                 >
                   View Result
                 </button>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
-
-        
       </div>
     </div>
   );
