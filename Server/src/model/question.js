@@ -23,7 +23,7 @@ const questionSchema = new mongoose.Schema({
   bloomLevel: { type: String, required: true },
   questionType: { type: String, enum: ["MCQ", "MSQ", "Subjective"], required: true },  
   questionFormat: { type: String, enum: ["Image", "Text"], required: true },
-  marks: { type: Number, default: 5 },
+  marks: { type: Number, default: 0 },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Teacher", required: true }
 },{timestamps: true});
 

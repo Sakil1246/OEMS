@@ -10,13 +10,17 @@ const InsertQuestions = () => {
   const location = useLocation();
   const { examDetails } = location.state || {};
   const [errorMessage, setErrorMessage] = useState("");
+  const [totalMarks, setTotalMarks] = useState(0);
+
+
+
   const createEmptyQuestion = (questionType = "Subjective") => ({
     questionType,
     questionFormat: "Text",
     questionText: "",
     questionImage: "",
     bloomLevel: "",
-    marks: 5,
+    marks: 0,
     options: questionType !== "Subjective" ?
       Array(4).fill(null).map(() => ({ text: "", image: "", format: "Text" }))
       : [],
@@ -40,9 +44,7 @@ const InsertQuestions = () => {
   const [selectedFiles, setSelectedFiles] = useState({});
   const [uploadStatus, setUploadStatus] = useState({});
 
-  useEffect(() => {
-    localStorage.setItem("questions", JSON.stringify(questions));
-  }, [questions]);
+ 
 
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...questions];
@@ -130,7 +132,7 @@ const InsertQuestions = () => {
 
     try {
 
-      // Filter out empty questions (those with blank questionText)
+
       const filteredQuestions = questions.filter(q => q.questionText.trim() !== "");
 
       if (filteredQuestions.length === 0) {
@@ -138,7 +140,7 @@ const InsertQuestions = () => {
         return;
       }
 
-      // Validate that all MCQ/MSQ questions have a correct answer
+
       const invalidMCQ = filteredQuestions.some(q =>
         (q.questionType !== "Subjective" && !q.correctOptions.trim())
       );
@@ -148,7 +150,7 @@ const InsertQuestions = () => {
         return;
       }
 
-      // Prepare the final payload
+
       const payload = {
         semester: Number(examDetails.semester),
         examName: examDetails.examName,
@@ -160,7 +162,6 @@ const InsertQuestions = () => {
         aboutExam: examDetails.aboutExam ? examDetails.aboutExam : undefined,
         questions: filteredQuestions,
         department: examDetails.department,
-
       };
 
       //console.log("Submitting Exam Payload:", payload);
@@ -186,57 +187,64 @@ const InsertQuestions = () => {
 
   };
 
+  useEffect(() => {
+    const currentTotal = questions.reduce((sum, q) => sum + Number(q.marks || 0), 0);
+    setTotalMarks(currentTotal);
+  }, [questions]);
 
-
-//console.log(errorMessage.error);
+  //console.log(errorMessage.error);
   return (
-    <div className="min-h-screen p-8 bg-[#0F0F24]">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+    <div className="min-h-screen pt-20 p-8 bg-[#0F0F24] flex justify-center relative">
+  
+     
+      <div className="hidden lg:block fixed right-4 top-24 w-52 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 text-center font-semibold rounded shadow z-50">
+        Total Marks: {totalMarks} / {examDetails?.totalMarks}
+      </div>
+  
+      
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+  
         <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Insert Questions</h1>
-
+  
         {questions.map((q, qIndex) => (
           <div key={qIndex} className="mb-6 border p-4 rounded-lg bg-gray-100">
             <label className="block text-lg font-medium text-gray-800 mb-1">Question {qIndex + 1}</label>
-
-            {/* Question Type */}
-            <label className="block  font-medium text-gray-500 mb-1">Question Type</label>
+  
+            <label className="block font-medium text-gray-500 mb-1">Question Type</label>
             <select
               value={q.questionType}
               onChange={(e) => handleQuestionChange(qIndex, "questionType", e.target.value)}
-              className="w-full border p-2 rounded text-white"
+              className="w-full border p-2 rounded text-white bg-black"
             >
               <option value="MCQ">MCQ</option>
               <option value="MSQ">MSQ</option>
               <option value="Subjective">Subjective</option>
             </select>
-
-            {/* Question Format */}
+  
             <label className="block mt-2 font-medium text-gray-500 mb-1">Question Format</label>
             <select
               value={q.questionFormat}
               onChange={(e) => handleQuestionChange(qIndex, "questionFormat", e.target.value)}
-              className="w-full border p-2 rounded text-white"
+              className="w-full border p-2 rounded text-white bg-black"
             >
               <option value="Text">Text</option>
               <option value="Image">Image</option>
             </select>
-
-            {/* Always Visible Text Input for Question */}
+  
             <label className="block text-lg font-medium text-gray-500 mt-4">Enter Question</label>
             <input
               type="text"
               value={q.questionText}
               onChange={(e) => handleQuestionChange(qIndex, "questionText", e.target.value)}
-              className="w-full border p-2 rounded text-white"
+              className="w-full border p-2 rounded text-white bg-black"
             />
-
-            {/* File Upload for Image Questions */}
+  
             {q.questionFormat === "Image" && (
               <>
                 <input
                   type="file"
                   onChange={(e) => handleFileSelect(e.target.files[0], qIndex, "questionImage")}
-                  className="mt-2 text-white"
+                  className="mt-2 text-green-500"
                 />
                 {selectedFiles[`${qIndex}-q`] && (
                   <div className="mt-2">
@@ -254,18 +262,16 @@ const InsertQuestions = () => {
                     >
                       Upload
                     </button>
-
                   </div>
                 )}
                 {uploadStatus[`${qIndex}-q`] && (
-                  <p className={`mt-1 text-sm ${uploadStatus[`${qIndex}-q`] === "Upload successful" ? "text-green-600" : "text-red-600"}`}>
+                  <p className={`mt-1 text-black text-sm ${uploadStatus[`${qIndex}-q`] === "Upload successful" ? "text-green-600" : "text-red-600"}`}>
                     {uploadStatus[`${qIndex}-q`]}
                   </p>
                 )}
               </>
             )}
-
-            {/* Options (for MCQ and MSQ) */}
+  
             {q.questionType !== "Subjective" &&
               q.options.map((opt, optIndex) => (
                 <div key={optIndex} className="block mt-2 font-medium text-gray-500 mb-1">
@@ -278,20 +284,20 @@ const InsertQuestions = () => {
                     <option value="Text">Text</option>
                     <option value="Image">Image</option>
                   </select>
-
+  
                   {opt.format === "Text" ? (
                     <input
                       type="text"
                       value={opt.text}
                       onChange={(e) => handleOptionChange(qIndex, optIndex, "text", e.target.value)}
-                      className="w-full border p-2 rounded mt-2 text-white"
+                      className="w-full border p-2 rounded mt-2 text-white bg-black"
                     />
                   ) : (
                     <>
                       <input
                         type="file"
                         onChange={(e) => handleFileSelect(e.target.files[0], qIndex, "image", optIndex)}
-                        className="mt-2 text-white"
+                        className="mt-2 text-green-500"
                       />
                       {selectedFiles[`${qIndex}-opt-${optIndex}`] && (
                         <div className="mt-2">
@@ -318,7 +324,7 @@ const InsertQuestions = () => {
                   )}
                 </div>
               ))}
-
+  
             {q.questionType !== "Subjective" && (
               <>
                 <label className="block mt-5 font-medium text-gray-500 mb-1">Correct Options</label>
@@ -326,67 +332,83 @@ const InsertQuestions = () => {
                   type="text"
                   value={q.correctOptions}
                   onChange={(e) => handleQuestionChange(qIndex, "correctOptions", e.target.value)}
-                  className="w-full border p-2 rounded text-white"
+                  className="w-full border p-2 rounded text-white bg-black"
                 />
               </>
             )}
-
+  
             <label className="block mt-2 font-medium text-gray-500 mb-1">Bloom's Level</label>
-            <select className="w-full border p-3 rounded text-white"
+            <select
+              className="w-full border p-3 rounded text-white bg-black"
               value={q.bloomLevel}
               onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
             >
               <option>Select bloom's level</option>
               <option>Remember</option>
-              <option >Understand</option>
+              <option>Understand</option>
               <option>Apply</option>
               <option>Analyze</option>
               <option>Evaluate</option>
               <option>Create</option>
             </select>
-
+  
             <label className="block mt-2 font-medium text-gray-500 mb-1">Marks</label>
             <input
               type="number"
               value={q.marks}
               onChange={(e) => handleQuestionChange(qIndex, "marks", e.target.value)}
-              className="w-full border p-2 rounded text-white"
+              className="w-full border p-2 rounded text-white bg-black"
             />
           </div>
         ))}
-       {errorMessage && (
-  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
-    <strong className="font-bold">Error: </strong>
-    <span className="block sm:inline">{errorMessage}</span>
-  </div>
-)}
-
-        {/* Buttons */}
-        <div className="flex justify-start space-x-4 mt-6">
+  
+        {errorMessage && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{errorMessage}</span>
+          </div>
+        )}
+  
+        <div className="flex flex-wrap gap-4 mt-6">
           <button
-            onClick={() => setQuestions([...questions, createEmptyQuestion("Subjective")])}
+            onClick={() => {
+              const currentTotal = questions.reduce((sum, q) => sum + Number(q.marks || 0), 0);
+              if (currentTotal >= examDetails.totalMarks) {
+                alert("You cannot exceed the total exam marks.");
+                return;
+              }
+              setQuestions([...questions, createEmptyQuestion("Subjective")]);
+            }}
             className="bg-blue-500 text-white px-3 py-3 rounded-lg shadow hover:bg-blue-600 transition"
           >
             Add More Question
           </button>
+  
           <button
             onClick={() => navigate(-1)}
             className="bg-gray-500 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-600 transition"
           >
             Back
           </button>
-          <button onClick={resetForm} className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">
+  
+          <button
+            onClick={resetForm}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition"
+          >
             Reset
           </button>
-          <button onClick={handleCreateExam} className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition">
+  
+          <button
+            onClick={handleCreateExam}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition"
+          >
             Create Exam
           </button>
         </div>
-        
       </div>
     </div>
   );
-
+  
 
 };
 
