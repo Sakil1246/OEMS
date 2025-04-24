@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+const answer = require("./answer");
 
 const examResultSchema = new mongoose.Schema({
   studentId: {
@@ -16,7 +17,8 @@ const examResultSchema = new mongoose.Schema({
       questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true },
       selectedOption: { type: Number },
       subjectiveAnswer: { type: String },
-      marksObtained: { type: Number, default: 0 } // ✅ Add this
+      answerId: { type: mongoose.Schema.Types.ObjectId, ref: "Answer" ,required: true },
+      
     }
   ],
   

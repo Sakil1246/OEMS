@@ -144,7 +144,7 @@ const ViewResult = () => {
 
                     <div className="text-right mt-3">
                       <span className="text-white text-sm font-medium bg-gray-600 px-3 py-1 rounded">
-                        Marks: {ans.marksObtained ?? 0} / {ans.questionId?.marks ?? "?"}
+                        Marks: {ans.examId?.marksObtained } / {ans.questionId?.marks ?? "?"}
                       </span>
                     </div>
                   </div>

@@ -523,10 +523,13 @@ examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => 
     const { examId } = req.params;
 
     const result = await examResult.findOne({ studentId, examId })
-      .populate({
+      .populate([{
         path: 'answers.questionId',
-        select: 'questionText questionImage questionType correctOptions marks '
-      });
+        select: 'questionText questionImage questionType correctOptions marks options'
+      },{
+        path:'answers.answerId',
+        select:'marksObtained'
+      }]);
 
     if (!result) {
       return res.status(404).json({ success: false, message: 'Result not found' });

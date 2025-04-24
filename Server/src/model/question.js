@@ -17,7 +17,7 @@ const questionSchema = new mongoose.Schema({
         
         return this.questionType === "MCQ" || this.questionType === "MSQ";
       },
-      // message: "correctOptions is only allowed for MCQ or MSQ questions."
+      
     }
   },
   bloomLevel: { type: String, required: true },
