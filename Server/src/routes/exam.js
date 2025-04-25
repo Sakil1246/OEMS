@@ -506,23 +506,59 @@ examRouter.get("/student/:studentId/attempted-exams", async (req, res) => {
   try {
     const { studentId } = req.params;
 
-    const attemptedExams = await examResult.find({ studentId }).populate("examId");
+    const answeredExamIds = await answer.aggregate([
+      {
+        $match: {
+          studentId: new mongoose.Types.ObjectId(studentId),
+        },
+      },
+      {
+        $group: {
+          _id: "$examId",
+        },
+      },
+    ]);
 
-    const exams = attemptedExams.map(result => result.examId);
+    const examIds = answeredExamIds.map((item) => item._id);
 
-    res.status(200).json({ success: true, data: exams });
+    if (examIds.length === 0) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+
+    const exams = await exam.find({ _id: { $in: examIds } }).lean();
+
+    const results = await examResult
+      .find({ studentId: studentId })
+      .lean();
+
+    const responseData = exams.map((examDoc) => {
+      const result = results.find(
+        (r) => r.examId.toString() === examDoc._id.toString()
+      );
+
+      return { 
+        _id: examDoc._id,
+        examName: examDoc.examName,
+        subjectName: examDoc.subjectName,
+        startTime: examDoc.startTime,
+        evaluated: !!result,
+        score: result?.score || null,
+      };
+    });
+
+    res.status(200).json({ success: true, data: responseData });
   } catch (err) {
     console.error("Error fetching attempted exams:", err);
     res.status(500).json({ success: false, message: "Failed to fetch attempted exams." });
   }
 });
 
+
 examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => {
   try {
     const studentId = req.student._id;
     const { examId } = req.params;
 
-    // Fetch exam result
     const result = await examResult.findOne({ studentId, examId })
       .populate({
         path: 'answers.questionId',
@@ -532,24 +568,19 @@ examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => 
     if (!result) {
       return res.status(404).json({ success: false, message: 'Result not found' });
     }
-
-    // Extract questionIds
     const questionIds = result.answers.map(ans => ans.questionId?._id || ans.questionId);
 
-    // Fetch corresponding answers with marksObtained
     const answerDocs = await Answer.find({
       examId,
       studentId,
       questionId: { $in: questionIds }
     }).select('questionId marksObtained');
 
-    // Map questionId -> marksObtained
     const marksMap = {};
     answerDocs.forEach(ans => {
       marksMap[ans.questionId.toString()] = ans.marksObtained;
     });
 
-    // Attach marksObtained to each answer
     const enrichedAnswers = result.answers.map(ans => {
       const qId = ans.questionId._id?.toString() || ans.questionId.toString();
       return {

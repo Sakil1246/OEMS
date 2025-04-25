@@ -6,19 +6,20 @@ import { Basic_URL } from '../../utils/constants';
 const ViewResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId, examName, subject} = location.state;
+  const { examId, examName, subject } = location.state;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [batchmateScores, setBatchmateScores] = useState(null);
-  const [activeView, setActiveView] = useState('score');  
+  const [activeView, setActiveView] = useState('score');
 
-  
   const fetchResultDetails = async () => {
     try {
       const res = await axios.get(`${Basic_URL}exam/${examId}/result-details`, {
         withCredentials: true
       });
+      console.log(res);
+
       setResult(res.data.data);
     } catch (err) {
       console.error("Error fetching result details:", err);
@@ -27,7 +28,6 @@ const ViewResult = () => {
     }
   };
 
-  
   const fetchBatchmateScores = async () => {
     try {
       const res = await axios.get(`${Basic_URL}exam/${examId}/batchmate-scores`, {
@@ -47,14 +47,12 @@ const ViewResult = () => {
     return Array.isArray(options) ? options.join(", ") : options;
   };
 
-
   const handleViewChange = (viewType) => {
     setActiveView(viewType);
     if (viewType === 'batchmates' && !batchmateScores) {
       fetchBatchmateScores();
     }
   };
-console.log(result);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -64,7 +62,7 @@ console.log(result);
 
       <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
         <h2 className="text-3xl font-bold text-center mb-2 text-white">{examName}</h2>
-        <p className="text-center text-xl text-orange-300 mb-2">{"Subject: "+subject}</p>
+        <p className="text-center text-xl text-orange-300 mb-2">{"Subject: " + subject}</p>
 
         {loading ? (
           <p className="text-center text-blue-300 text-lg mt-6">Loading result details...</p>
@@ -72,12 +70,9 @@ console.log(result);
           <p className="text-center text-red-400 mt-6">Result not found.</p>
         ) : (
           <>
-            
-            
-              <div className="text-center text-xl font-semibold mt-4 mb-4">
-                <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
-              </div>
-            
+            <div className="text-center text-xl font-semibold mt-4 mb-4">
+              <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
+            </div>
 
             <div className="text-center mb-6 text-sm">
               Status: {result.evaluated ? (
@@ -87,7 +82,6 @@ console.log(result);
               )}
             </div>
 
-           
             <div className="text-center mb-4">
               <button
                 className={`bg-blue-500 text-white py-2 px-4 rounded mr-4 ${activeView === 'answers' ? 'bg-blue-700' : ''}`}
@@ -103,7 +97,6 @@ console.log(result);
               </button>
             </div>
 
-            
             {activeView === 'answers' && (
               <div className="space-y-5">
                 {result.answers.map((ans, idx) => (
@@ -121,21 +114,59 @@ console.log(result);
                     )}
 
                     {ans.questionId?.questionType === 'MCQ' && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                        <div className="text-blue-300">
-                          Selected Option:{" "}
-                          <span className="font-medium">
-                            {ans.selectedOption ?? "—"}
-                          </span>
-                        </div>
-                        <div className="text-green-300">
-                          Correct Option(s):{" "}
-                          <span className="font-medium">
-                            {renderCorrectOptions(ans.questionId.correctOptions)}
-                          </span>
+                      <div className="mt-3 space-y-2">
+                        <div className="text-white font-semibold mb-1">Options:</div>
+                        <ul className="space-y-1">
+                          {ans.questionId.options.map((opt, index) => {
+                            const isCorrect = Array.isArray(ans.questionId.correctOptions)
+                              ? ans.questionId.correctOptions.includes(index + 1) // adjust for 1-based indexing
+                              : ans.questionId.correctOptions === index + 1;
+
+                            const isSelected = ans.selectedOption === index + 1; // adjust for 1-based indexing
+
+                            return (
+                              <li
+                                key={opt._id}
+                                className={`p-2 rounded-md border ${isCorrect
+                                    ? 'border-green-400 bg-green-800'
+                                    : isSelected
+                                      ? 'border-blue-400 bg-blue-800'
+                                      : 'border-gray-600 bg-gray-700'
+                                  }`}
+                              >
+                                <span className="text-white">{String.fromCharCode(65 + index)}. {opt.text}</span>
+                                {opt.image && (
+                                  <img
+                                    src={opt.image}
+                                    alt={`Option ${index + 1}`}
+                                    className="mt-2 rounded w-48"
+                                  />
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+                          <div className="text-blue-300">
+                            Selected Option:{" "}
+                            <span className="font-medium">
+                              {ans.selectedOption !== undefined ? String.fromCharCode(65 + (ans.selectedOption - 1)) : "—"}
+                            </span>
+                          </div>
+                          <div className="text-green-300">
+                            Correct Option(s):{" "}
+                            <span className="font-medium">
+                              {Array.isArray(ans.questionId.correctOptions)
+                                ? ans.questionId.correctOptions.map(i => String.fromCharCode(65 + (i - 1))).join(', ')
+                                : String.fromCharCode(65 + (ans.questionId.correctOptions - 1))}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
+
+
 
                     {ans.subjectiveAnswer && (
                       <p className="text-purple-300 mt-2">
@@ -145,14 +176,13 @@ console.log(result);
 
                     <div className="text-right mt-3">
                       <span className="text-white text-sm font-medium bg-gray-600 px-3 py-1 rounded">
-                      Marks: {ans.marksObtained ?? "N/A"} / {ans.questionId?.marks ?? "?"}
+                        Marks: {ans.marksObtained ?? "N/A"} / {ans.questionId?.marks ?? "?"}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-
 
             {activeView === 'batchmates' && batchmateScores && (
               <div className="overflow-x-auto mt-4">
