@@ -73,6 +73,12 @@ const Answersubmittingstudents = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
+      <button
+        className="absolute  left-6 text-blue-400 hover:text-blue-300 font-medium transition"
+        onClick={() => navigate(-1)}
+      >
+        ⬅ Back
+      </button>
       <h1 className="text-3xl font-bold text-center mb-8">{examName + ", " + subjectName}</h1>
 
       {loading ? (

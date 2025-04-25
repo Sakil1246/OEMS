@@ -13,6 +13,20 @@ const Editexampaper = () => {
   const [showInsertQuestion, setShowInsertQuestion] = useState(true);
   const [showNextButton, setShowNextButton] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+
+  const createEmptyQuestion = (questionType = "Subjective") => ({
+    questionType,
+    questionFormat: "Text",
+    questionText: "",
+    questionImage: "",
+    bloomLevel: "",
+    marks: 5,
+    options: questionType !== "Subjective" ?
+      Array(4).fill(null).map(() => ({ text: "", image: "", format: "Text" }))
+      : [],
+    correctOptions: questionType !== "Subjective" ? "" : undefined,
+  });
   const loadSavedQuestions = () => {
     try {
       const savedQuestions = JSON.parse(localStorage.getItem("questions")) || [];
@@ -52,7 +66,7 @@ const Editexampaper = () => {
         withCredentials: true,
       });
 
-      // Optional: normalize/validate if needed here
+      
       const formattedQuestions = res.data.data.map(q => ({
         ...q,
         options: q.options || [
@@ -141,18 +155,18 @@ const Editexampaper = () => {
     sessionStorage.removeItem('visitedInsertQuestions');
     localStorage.removeItem('examDetails');
   };
-  const createEmptyQuestion = (questionType = "Subjective") => ({
-    questionType,
-    questionFormat: "Text",
-    questionText: "",
-    questionImage: "",
-    bloomLevel: "",
-    marks: 5,
-    options: questionType !== "Subjective" ?
-      Array(4).fill(null).map(() => ({ text: "", image: "", format: "Text" }))
-      : [],
-    correctOptions: questionType !== "Subjective" ? "" : undefined,
-  });
+  // const createEmptyQuestion = (questionType = "Subjective") => ({
+  //   questionType,
+  //   questionFormat: "Text",
+  //   questionText: "",
+  //   questionImage: "",
+  //   bloomLevel: "",
+  //   marks: 5,
+  //   options: questionType !== "Subjective" ?
+  //     Array(4).fill(null).map(() => ({ text: "", image: "", format: "Text" }))
+  //     : [],
+  //   correctOptions: questionType !== "Subjective" ? "" : undefined,
+  // });
 
 
 
