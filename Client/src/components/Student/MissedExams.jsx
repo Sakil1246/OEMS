@@ -21,23 +21,31 @@ const MissedExams = () => {
     );
   }
 
-  const Card = ({ title, icon, color, date, marks }) => (
-    <div className="bg-gray-800 border border-gray-700 shadow-2xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)] rounded-2xl p-6 w-full max-w-4xl flex justify-between items-center hover:scale-[1.03] transition-transform duration-300">
-      <div>
+  const Card = ({ title, icon, color, date, marks, name }) => (
+    <div className="bg-gray-800 border border-gray-700 shadow-2xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)] rounded-2xl p-6 w-full max-w-4xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:scale-[1.03] transition-transform duration-300">
+      
+      {/* Left Side Content */}
+      <div className="flex-1">
         <div className={`w-14 h-14 flex items-center justify-center rounded-lg text-white ${color}`}>
           {icon}
         </div>
         <h3 className="text-2xl font-semibold text-white mt-4">{title[0]}</h3>
         {title.length > 1 && <p className="text-gray-300 mt-1">Subject: {title[1]}</p>}
-        <p className="text-gray-400 mt-1">Marks: {marks}</p>
-        <p className="text-gray-400 mt-1">Date: {date}</p>
+        <p className="text-gray-400 mt-1">📝 Marks: {marks}</p>
+        <p className="text-gray-400 mt-1">📅 Date: {date}</p>
+        <p className="text-sm text-gray-400 mt-2">👨‍🏫 Created by: <span className="text-white font-medium">{name[0]} {name[1]}</span></p>
       </div>
-      <div className="flex items-center space-x-2">
-        <CircleOff className="text-red-500" size={18} />
-        <span className="text-red-500 font-semibold text-lg">Missed</span>
+  
+      {/* Right Side Status */}
+      <div className="flex flex-col items-start md:items-end justify-between h-full gap-4">
+        <div className="flex items-center space-x-2">
+          <CircleOff className="text-red-500" size={18} />
+          <span className="text-red-500 font-semibold text-lg">Missed</span>
+        </div>
       </div>
     </div>
   );
+  
   
 
   return (
@@ -62,6 +70,7 @@ const MissedExams = () => {
             color="bg-blue-500"
             date={exam.examDate}
             marks={exam.totalMarks}
+            name={[exam.teacherFirstName, exam.teacherLastName]}
           />
         ))}
       </div>

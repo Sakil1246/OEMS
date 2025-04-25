@@ -111,13 +111,13 @@ examRouter.post("/teacher/exam/create", authTeacher, async (req, res) => {
 examRouter.get("/student/exam/list", authStudent, async (req, res) => {
   try {
     const exams = await Exam.find({})
+      .populate("teacherId", "firstName lastName") // populate only required fields
       .select("semester examName subjectName startTime duration totalMarks department _id teacherId")
       .sort({ startTime: 1 });
 
     const examsList = exams.map((exam) => {
       const now = new Date();
 
-      // Parse startTime correctly if stored in "dd/MM/yyyy, hh:mm a" format
       let startTime = new Date(exam.startTime);
       if (typeof exam.startTime === "string") {
         startTime = parse(exam.startTime, "dd/MM/yyyy, hh:mm a", new Date());
@@ -125,7 +125,6 @@ examRouter.get("/student/exam/list", authStudent, async (req, res) => {
 
       const endTime = new Date(startTime.getTime() + exam.duration * 60000);
 
-      // Convert to required format
       const startTimeIST = format(startTime, "dd/MM/yyyy, hh:mm a");
       const endTimeIST = format(endTime, "dd/MM/yyyy, hh:mm a");
 
@@ -139,7 +138,9 @@ examRouter.get("/student/exam/list", authStudent, async (req, res) => {
         totalMarks: exam.totalMarks,
         endTime: endTimeIST,
         examId: exam._id,
-        teacherId: exam.teacherId,
+        teacherId: exam.teacherId._id,
+        teacherFirstName: exam.teacherId.firstName,
+        teacherLastName: exam.teacherId.lastName,
       };
     });
 
@@ -148,6 +149,7 @@ examRouter.get("/student/exam/list", authStudent, async (req, res) => {
     res.status(400).send("ERROR: " + err.message);
   }
 });
+
 
 
 examRouter.get("/student/exam/:examId/questions", authStudent, async (req, res) => {

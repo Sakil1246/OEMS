@@ -6,7 +6,6 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 const OngoingExams = () => {
   const location = useLocation();
   const response = location.state;
-   console.log(response);
   const navigate=useNavigate();
 
   if (response.length<=0) {
@@ -21,7 +20,7 @@ const OngoingExams = () => {
   }
 
   
-  const Card = ({ title, icon,  color,date,marks}) => (
+  const Card = ({ title, icon,  color,date,marks,name}) => (
     <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between  w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300 " >
      <div>
       <div className={`w-14 h-14 rounded-lg flex items-center justify-center text-white ${color}`}>
@@ -36,11 +35,12 @@ const OngoingExams = () => {
         {"Date: " + date}
       </p>
     </div>
-    <div>
+    <div className="justify-between flex flex-col">
     <div className="flex items-center space-x-1">
     <FontAwesomeIcon icon={faCircle} className="text-red-500 animate-pulse" />
     <span className="text-red-500 font-extrabold">Live</span>
   </div>
+  <p className="text-white "> {"Created by: "+name[0]+" "+name[1]}</p>
     </div>
     </div>
   );
@@ -59,6 +59,7 @@ const OngoingExams = () => {
             color="bg-blue-500"
             date={exam.examDate}
             marks={exam.totalMarks}
+            name={[exam.teacherFirstName, exam.teacherLastName]}
          
             
             

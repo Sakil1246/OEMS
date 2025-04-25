@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 const StudentBody = () => {
   const [upcomingExams, setUpcomingExams] = useState(0);
   const [ongoingExams, setOngoingExams] = useState(0);
-  const [progress, setProgress] = useState(null);
   const [missedExams, setMissedExams] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [exams, setExams] = useState([]);
@@ -25,6 +24,8 @@ const StudentBody = () => {
       const res = await axios.get(Basic_URL + "student/exam/list", {
         withCredentials: true,
       });
+      console.log(res.data);
+      
       setExams(res.data);
 
       const now = new Date();

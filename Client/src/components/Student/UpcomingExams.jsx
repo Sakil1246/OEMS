@@ -21,12 +21,14 @@ const UpcomingExams = () => {
     );
   }
 
-  const Card = ({ title, icon, color, onClick, date, marks }) => (
+  const Card = ({ title, icon, color, onClick, date, marks, name }) => (
     <div className="w-full max-w-3xl bg-gray-900 rounded-2xl shadow-lg border border-gray-700 hover:border-orange-400 hover:scale-[1.02] transition-all duration-300 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-      <div className="flex items-start gap-4">
+      
+      <div className="flex items-start gap-4 flex-1">
         <div className={`w-14 h-14 flex items-center justify-center text-white rounded-lg ${color}`}>
           {icon}
         </div>
+  
         <div>
           <h3 className="text-2xl font-bold text-white">{title[0]}</h3>
           {title?.length > 1 && (
@@ -34,17 +36,22 @@ const UpcomingExams = () => {
           )}
           <p className="text-sm text-gray-400 mt-2">📝 Marks: {marks}</p>
           <p className="text-sm text-gray-400">📅 Date: {date}</p>
+          <p className="text-sm text-gray-400 mt-1">👨‍🏫 Created by: <span className="text-white font-medium">{name[0]} {name[1]}</span></p>
         </div>
       </div>
-      <button
-        className="bg-orange-500 hover:bg-orange-600 px-5 py-2 rounded-xl text-white font-semibold transition"
-        onClick={onClick}
-      >
-        Start
-      </button>
+  
+      <div className="mt-4 md:mt-0">
+        <button
+          className="bg-orange-500 hover:bg-orange-600 px-5 py-2 rounded-xl text-white font-semibold transition"
+          onClick={onClick}
+        >
+          Start
+        </button>
+      </div>
+  
     </div>
   );
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-8 text-white relative">
       <button
@@ -64,6 +71,7 @@ const UpcomingExams = () => {
             onClick={() => navigate("/termsCondition", { state: exam })}
             date={exam.examDate}
             marks={exam.totalMarks}
+            name={[exam.teacherFirstName, exam.teacherLastName]}
           />
         ))}
       </div>
