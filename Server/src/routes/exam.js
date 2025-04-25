@@ -356,7 +356,7 @@ examRouter.post("/teacher/answer/:answerId/evaluate", authTeacher, async (req, r
       return res.status(400).json({ message: "Invalid marks value" });
     }
 
-    const updatedAnswer = await Answer.findByIdAndUpdate(
+    const updatedAnswer = await answer.findByIdAndUpdate(
       answerId,
       {
         $set: {
@@ -522,43 +522,69 @@ examRouter.get('/exam/:examId/result-details', authStudent, async (req, res) => 
     const studentId = req.student._id;
     const { examId } = req.params;
 
+    // Fetch exam result
     const result = await examResult.findOne({ studentId, examId })
-      .populate([{
+      .populate({
         path: 'answers.questionId',
         select: 'questionText questionImage questionType correctOptions marks options'
-      },{
-        path:'answers.answerId',
-        select:'marksObtained'
-      }]);
+      });
 
     if (!result) {
       return res.status(404).json({ success: false, message: 'Result not found' });
     }
 
-    return res.status(200).json({ success: true, data: result });
+    // Extract questionIds
+    const questionIds = result.answers.map(ans => ans.questionId?._id || ans.questionId);
+
+    // Fetch corresponding answers with marksObtained
+    const answerDocs = await Answer.find({
+      examId,
+      studentId,
+      questionId: { $in: questionIds }
+    }).select('questionId marksObtained');
+
+    // Map questionId -> marksObtained
+    const marksMap = {};
+    answerDocs.forEach(ans => {
+      marksMap[ans.questionId.toString()] = ans.marksObtained;
+    });
+
+    // Attach marksObtained to each answer
+    const enrichedAnswers = result.answers.map(ans => {
+      const qId = ans.questionId._id?.toString() || ans.questionId.toString();
+      return {
+        ...ans.toObject(),
+        marksObtained: marksMap[qId] ?? null
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        ...result.toObject(),
+        answers: enrichedAnswers
+      }
+    });
   } catch (error) {
     console.error("Error fetching result:", error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 examRouter.post('/teacher/update-results', authTeacher, async (req, res) => {
   try {
     const { examId, results } = req.body;
-
     if (!examId || !Array.isArray(results)) {
       return res.status(400).json({ success: false, message: "Invalid input." });
     }
-
     for (const result of results) {
       const { studentId, marksObtained } = result;
-
       await examResult.findOneAndUpdate(
         { studentId, examId },
         { score: marksObtained, evaluated: true },
         { new: true }
       );
-    }
-
+    } 
     return res.status(200).json({ success: true, message: "Results updated successfully." });
   } catch (error) {
     console.error("Error updating results:", error);

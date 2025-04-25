@@ -55,8 +55,8 @@ const Answersubmittingstudents = () => {
       const payload = {
         examId,
         results: students.map(student => ({
-          studentId: student._id,
-          marksObtained: student.marksObtained || 0,
+          studentId: student?._id,
+          marksObtained: student?.marksObtained ,
         }))
       };
 

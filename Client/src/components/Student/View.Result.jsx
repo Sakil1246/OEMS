@@ -54,6 +54,7 @@ const ViewResult = () => {
       fetchBatchmateScores();
     }
   };
+console.log(result);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -72,11 +73,11 @@ const ViewResult = () => {
         ) : (
           <>
             
-            {activeView === 'score' && (
+            
               <div className="text-center text-xl font-semibold mt-4 mb-4">
                 <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
               </div>
-            )}
+            
 
             <div className="text-center mb-6 text-sm">
               Status: {result.evaluated ? (
@@ -144,7 +145,7 @@ const ViewResult = () => {
 
                     <div className="text-right mt-3">
                       <span className="text-white text-sm font-medium bg-gray-600 px-3 py-1 rounded">
-                        Marks: {ans.examId?.marksObtained } / {ans.questionId?.marks ?? "?"}
+                      Marks: {ans.marksObtained ?? "N/A"} / {ans.questionId?.marks ?? "?"}
                       </span>
                     </div>
                   </div>
