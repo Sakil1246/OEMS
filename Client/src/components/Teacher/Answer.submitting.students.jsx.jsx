@@ -65,6 +65,7 @@ const Answersubmittingstudents = () => {
       });
 
       alert("Results updated successfully!");
+      navigate("/teacherDashboard/studentPerformance")
     } catch (error) {
       console.error("Error updating results:", error);
       alert("Failed to update results.");

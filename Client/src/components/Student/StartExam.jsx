@@ -33,8 +33,18 @@ const StartExam = () => {
   }, []);
 
   const handleAnswerChange = (questionId, optionIndex) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
+    setAnswers((prev) => {
+
+      if (prev[questionId] === optionIndex) {
+        const newAnswers = { ...prev };
+        delete newAnswers[questionId];
+        return newAnswers;
+      } else {
+        return { ...prev, [questionId]: optionIndex };
+      }
+    });
   };
+
 
   const handleSaveAndNext = () => {
     const questionId = newQuestions[currentQuestionIndex]._id;
@@ -44,14 +54,19 @@ const StartExam = () => {
       newSet.delete(questionId);
       return newSet;
     });
-    setCurrentQuestionIndex((prev) => Math.min(prev + 1, newQuestions.length - 1));
+    setCurrentQuestionIndex((prev) =>
+      prev === newQuestions.length - 1 ? 0 : prev + 1
+    );
   };
 
   const handleReviewAndNext = () => {
     const questionId = newQuestions[currentQuestionIndex]._id;
     setReviewedQuestions((prev) => new Set([...prev, questionId]));
-    setCurrentQuestionIndex((prev) => Math.min(prev + 1, newQuestions.length - 1));
+    setCurrentQuestionIndex((prev) =>
+      prev === newQuestions.length - 1 ? 0 : prev + 1
+    );
   };
+
 
   const handleSubmitExam = async () => {
     try {
@@ -62,7 +77,7 @@ const StartExam = () => {
         return {
           questionId,
           answerText: isMCQ ? null : answers[questionId],
-          selectedOption: isMCQ ? answers[questionId]+1 : null,
+          selectedOption: isMCQ ? answers[questionId] + 1 : null,
         };
       });
 
@@ -113,23 +128,44 @@ const StartExam = () => {
 
             {newQuestions[currentQuestionIndex].questionType === "MCQ" ? (
               <div className="mt-2">
-                {newQuestions[currentQuestionIndex].options.map((option, index) => (
-                  <label key={index} className="block mt-2">
-                    <input
-                      type="radio"
-                      name={`question-${currentQuestionIndex}`}
-                      value={index}
-                      checked={
-                        answers[newQuestions[currentQuestionIndex]._id] === index
+                {newQuestions[currentQuestionIndex].options.map((option, index) => {
+                  const questionId = newQuestions[currentQuestionIndex]._id;
+                  const isSelected = answers[questionId] === index;
+
+                  return (
+                    <div
+                      key={index}
+                      onClick={() =>
+                        setAnswers((prev) => ({
+                          ...prev,
+                          [questionId]: isSelected ? null : index,
+                        }))
                       }
-                      onChange={() =>
-                        handleAnswerChange(newQuestions[currentQuestionIndex]._id, index)
-                      }
-                      className="mr-2"
-                    />
-                    <span className="text-black font-medium">{option.text}</span>
-                  </label>
-                ))}
+                      className={`cursor-pointer p-3 border rounded-lg flex items-center space-x-4 mt-4 transition
+        ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white hover:bg-gray-100'}
+      `}
+                    >
+                      {/* Custom Radio Indicator */}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
+        ${isSelected ? 'border-blue-600' : 'border-gray-400'}
+      `}>
+                        {isSelected && <div className="w-2.5 h-2.5 bg-blue-600 rounded-full" />}
+                      </div>
+
+                      {/* Option Content */}
+                      {option.image ? (
+                        <img
+                          src={option.image}
+                          alt={`Option ${index + 1}`}
+                          className="max-h-24 object-contain rounded"
+                        />
+                      ) : (
+                        <span className="text-gray-800 font-medium">{option.text}</span>
+                      )}
+                    </div>
+                  );
+                })}
+
               </div>
             ) : (
               <textarea
@@ -146,12 +182,16 @@ const StartExam = () => {
 
         <div className="flex justify-between mt-6">
           <button
+            onClick={() => setCurrentQuestionIndex((prev) => Math.max(prev - 1, 0))}
             disabled={currentQuestionIndex === 0}
-            onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            className={`px-4 py-2 rounded font-medium transition ${currentQuestionIndex === 0
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-gray-500 text-white hover:bg-gray-600"
+              }`}
           >
             Previous
           </button>
+
 
           <button
             onClick={handleSaveAndNext}

@@ -22,7 +22,7 @@ const OngoingExams = () => {
 
   
   const Card = ({ title, icon,  color,date,marks}) => (
-    <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between  w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300 ">
+    <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between  w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300 " >
      <div>
       <div className={`w-14 h-14 rounded-lg flex items-center justify-center text-white ${color}`}>
         {icon}
@@ -47,7 +47,7 @@ const OngoingExams = () => {
 
   return (
     <>
-    <p className="text-red-500 font-bold text-center">You can attempt the exams only before it starts.</p>
+    <p className="text-red-500 mt-4 font-bold text-center">You can attempt the exams only before it starts.</p>
     <div className=" min-h-screen flex flex-col items-center p-6">
       
       <div className="flex flex-wrap justify-center gap-8 w-full max-w-6xl">
@@ -59,7 +59,7 @@ const OngoingExams = () => {
             color="bg-blue-500"
             date={exam.examDate}
             marks={exam.totalMarks}
-            // marks={exam.}
+         
             
             
           />
