@@ -7,7 +7,7 @@ const bcrypt=require("bcrypt");
  authRouter.post("/teacher/signup",async (req,res)=>{
     try{
         validateTeacherSignupData(req);
-        const {password,firstName,lastName,email}=req.body;
+        const {password,firstName,lastName,email,department}=req.body;
         const existingTeacher=await Teacher.findOne({email
         });
         if(existingTeacher){
@@ -18,10 +18,12 @@ const bcrypt=require("bcrypt");
             email,
             password:hashPassword,
             firstName,
-            lastName
+            lastName,department
         })
        
         await newTeacher.save();
+        const token=await newTeacher.getJWT();
+        res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)});
         res.json({
             message:"New teacher Signup successfully",
             data:newTeacher});

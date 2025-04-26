@@ -35,19 +35,18 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gray-900 border-b border-gray-700 shadow-md px-6 py-3 flex justify-between items-center">
-      {/* Logo */}
-      <Link to={`/${status}dashboard`} className="text-2xl text-orange-400 font-bold tracking-wide hover:text-orange-500 transition">
+     
+      <Link to={`/${status}dashboard`} className="text-2xl text-blue-400 font-bold tracking-wide hover:text-orange-500 transition">
         ExamZen
       </Link>
 
-      {/* Right Menu */}
       <div className="flex items-center gap-4">
-        {/* Welcome */}
+       
         <p className="text-white font-semibold hidden sm:block truncate max-w-xs">
           Welcome, {role?.firstName}
         </p>
 
-        {/* Profile Dropdown */}
+      
         <div className="relative">
           <div
             onClick={toggleDropdown}
@@ -61,9 +60,9 @@ const Navbar = () => {
           </div>
 
           {dropdownOpen && (
-            <ul className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-md z-50">
+            <ul className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-md z-50">
               <li>
-                <a className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</a>
+                <a className="block px-4 py-2 hover:bg-gray-200 cursor-pointer">Profile</a>
               </li>
               <li>
                 <a className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</a>

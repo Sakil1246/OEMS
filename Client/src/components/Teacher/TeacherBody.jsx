@@ -47,13 +47,13 @@ const TeacherBody = () => {
           transition={{ duration: 0.6 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mb-20 w-full max-w-6xl px-6"
         >
-          <Card
+          {/* <Card
             title="Upcoming Exams"
             description={`${upcomingExams.length} exam(s) scheduled`}
             icon={<FaCalendarAlt size={26} />}
             color="bg-orange-500"
             index={0}
-          />
+          /> */}
           <Card
             title="Manage Exams"
             description="Create, edit, or delete exam details"

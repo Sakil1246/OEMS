@@ -118,31 +118,10 @@ studentAuthRouter.post("/student/signup", async (req, res) => {
           department
       });
 
-      const laddu = await newStudent.save();
+       await newStudent.save();
       const token = newStudent.getJWT();
       res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
-
-      // const emailhead = rollNo.toLowerCase();
-      // const mailOptions = {
-      //     from: "sakilahmed345677@gmail.com",
-      //     to: emailhead + "@tezu.ac.in",
-      //     subject: "Hello from Sakil",
-      //     text: "Good Morning.",
-      // };
-
-      // // Send email first
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //     if (error) {
-      //         console.error("Error sending email: ", error);
-      //         return res.status(500).json({ message: "Signup successful, but email failed to send", data: laddu });
-      //     }
-
-      //     console.log("Email sent: ", info.response);
-      //     res.json({
-      //         message: "New student signed up successfully! Email sent.",
-      //         data: laddu,
-      //     });
-      // });
+      res.status(201).json({ message: "Student registered successfully", data: newStudent });
 
   } catch (err) {
       res.status(400).send("ERROR: " + err.message);
