@@ -14,18 +14,18 @@ const StudentBody = () => {
   const [missedExams, setMissedExams] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [exams, setExams] = useState([]);
-
+  const [attemptedExams, setAttemptedExams] = useState([]);
   const navigate = useNavigate();
   const student = useSelector((store) => store.student);
   const studentDepartment = student.department;
-
+  const { _id } = student;
   const fetchExam = async () => {
     try {
       const res = await axios.get(Basic_URL + "student/exam/list", {
         withCredentials: true,
       });
-      console.log(res.data);
-      
+
+
       setExams(res.data);
 
       const now = new Date();
@@ -43,19 +43,53 @@ const StudentBody = () => {
       });
       setOngoingExams(ongoing.length);
 
-      const missed = res.data.filter((exam) => {
-        const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", now);
-        return now > endTime && exam.department === studentDepartment;
-      });
-      setMissedExams(missed.length);
+
     } catch (err) {
       console.error("Failed to fetch exam details: ", err);
     }
   };
 
+
+
+
+
+
+  const fetchAttemptedExams = async () => {
+    try {
+      const res = await axios.get(`${Basic_URL}student/${_id}/attempted-exams`, {
+        withCredentials: true,
+      });
+
+
+      setAttemptedExams((res.data.data || []).filter(Boolean));
+    } catch (err) {
+      console.error('Error fetching attempted exams:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchExam();
+    fetchAttemptedExams();
   }, []);
+  useEffect(() => {
+    const now = new Date();
+    const attemptedIds = new Set(attemptedExams.map((a) => a._id));
+
+    const missed = exams.filter((exam) => {
+      const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", now);
+      return (
+        exam.department === studentDepartment &&
+        now > endTime &&
+        !attemptedIds.has(exam.examId)
+      );
+    });
+
+    setMissedExams(missed.length);
+  }, [exams, attemptedExams, studentDepartment]);
+
+
 
   const cardVariant = {
     hidden: { opacity: 0, y: 40 },
@@ -95,7 +129,7 @@ const StudentBody = () => {
           <Card
             title="Upcoming Exams"
             icon={<FaClipboardList size={24} />}
-            data={`${upcomingExams} exams scheduled`}
+            data={`${upcomingExams} exam(s) scheduled`}
             color="bg-orange-500"
             index={0}
             onClick={() => {
@@ -109,7 +143,7 @@ const StudentBody = () => {
           <Card
             title="Ongoing Exams"
             icon={<FaPlayCircle size={24} />}
-            data={`${ongoingExams} exams live now`}
+            data={`${ongoingExams} exam(s) live now`}
             color="bg-blue-500"
             index={1}
             onClick={() => {
@@ -125,7 +159,7 @@ const StudentBody = () => {
           <Card
             title="Missed Exams"
             icon={<RiErrorWarningFill size={24} />}
-            data={`${missedExams} exams you missed`}
+            data={`${missedExams} exam(s) you missed`}
             color="bg-red-500"
             index={2}
             onClick={() => {
@@ -140,7 +174,7 @@ const StudentBody = () => {
           <Card
             title="Progress & Attempted"
             icon={<FaChartBar size={24} />}
-            data={`See how you're doing`}
+            data={`${attemptedExams.length} exam(s) you have attempted`}
             color="bg-green-600"
             index={3}
             onClick={() => navigate("/studentdashboard/progress")}
@@ -158,5 +192,5 @@ const StudentBody = () => {
     </div>
   );
 };
-  
+
 export default StudentBody;

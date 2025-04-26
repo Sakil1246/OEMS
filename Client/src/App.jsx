@@ -26,6 +26,7 @@ import Studentsperfomance from "./components/Teacher/Students.perfomance";
 import Answersubmittingstudents from "./components/Teacher/Answer.submitting.students.jsx";
 import Answerevaluate from "./components/Teacher/Answer.evaluate.jsx";
 import ViewResult from "./components/Student/View.Result.jsx";
+import ScrollToTop from "./components/Scroll_to_top.jsx";
 
 function App() {
   const teacher = useSelector((state) => state.teacher);
@@ -33,6 +34,7 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+      <ScrollToTop />
         <Routes>
           <Route path="/" element={<SignIn />} />
 
