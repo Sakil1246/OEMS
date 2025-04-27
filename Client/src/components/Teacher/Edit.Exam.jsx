@@ -8,13 +8,17 @@ const EditExam = () => {
     const teacherId = useSelector((store) => store.teacher._id);
     const [exam, setExam] = useState([]);
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-    const navigate=useNavigate();
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
     const fetchExamList = async () => {
         try {
             const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
             setExam(examlist.data.data);
         } catch (err) {
             console.error("Failed to fetch exam list:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,37 +44,33 @@ const EditExam = () => {
         try {
             await axios.post(`${Basic_URL}teacher/exam/delete`, { id }, { withCredentials: true });
             setExam(prev => prev.filter(item => item._id !== id));
-            setToast("Exam deleted successfully!");
         } catch (err) {
             console.log("Failed to delete the exam");
         }
     };
 
-    const Card = ({ title,onEditClick, onClick, date, marks, createdAt, department, semester }) => (
-        <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full max-w-5xl hover:scale-105 transition-all duration-300 border border-gray-300">
+    const Card = ({ title, onEditClick, onClick, date, marks, createdAt, department, semester }) => (
+        <div className="cursor-pointer bg-gray-800 shadow-lg rounded-2xl p-6 flex justify-between w-full hover:scale-105 transition-all duration-300 border border-gray-300">
             <div>
-                <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title[0]}</h3>
-                {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-2">{"Subject: " + title[1]}</h3>}
-                <p className="text-gray-300 text-lg font-medium mt-2">{"Marks: " + marks}</p>
-                <p className="text-gray-300 text-lg font-medium mt-2">{"Exam Date: " + date}</p>
-                <p className="text-gray-300 text-lg font-medium mt-2">
+                <h3 className="text-2xl font-semibold text-gray-50 mt-2">{title[0]}</h3>
+                {title?.length > 1 && <h3 className="text-lg text-gray-100 mt-1">{"Subject: " + title[1]}</h3>}
+                <p className="text-gray-300 text-lg font-medium mt-1">{"Marks: " + marks}</p>
+                <p className="text-gray-300 text-lg font-medium mt-1">{"Exam Date: " + date}</p>
+                <p className="text-gray-300 text-lg font-medium mt-1">
                     {"Department: " + department + ", " + semester +
                         (semester === 1 ? "st" : semester === 2 ? "nd" : semester === 3 ? "rd" : "th") + " sem"}
                 </p>
-
             </div>
-            <div>
-                <div className='flex justify-end'>
-                    <p className="text-white font-semibold px-4 py-2 mt-4 rounded-lg">
-                        {"Created At: " + formatDateToIST(createdAt)}
-                    </p>
-                </div>
-                <div className='flex justify-end'>
-                    <button className="bg-blue-500 text-white font-semibold hover:bg-blue-400 px-4 py-2 mt-4 rounded-lg" onClick={onEditClick}>
+            <div className="flex flex-col justify-between items-end ml-4">
+                <p className="text-white text-sm font-semibold mt-2">
+                    {"Created At: " + formatDateToIST(createdAt)}
+                </p>
+                <div className="flex mt-4">
+                    <button className="bg-blue-500 text-white hover:bg-blue-400 font-semibold px-4 py-2 rounded-lg" onClick={onEditClick}>
                         Edit
                     </button>
                     <button
-                        className="bg-red-500 ml-3 text-white hover:bg-red-400 font-semibold px-4 py-2 mt-4 rounded-lg"
+                        className="bg-red-500 ml-3 text-white hover:bg-red-400 font-semibold px-4 py-2 rounded-lg"
                         onClick={onClick}
                     >
                         Delete
@@ -81,8 +81,9 @@ const EditExam = () => {
     );
 
     return (
-        <div className='flex justify-center items-center flex-col'>
+        <div className='bg-gray-900 min-h-screen px-4 py-6'>
 
+            {/* Delete Confirm Popup */}
             {deleteConfirmId && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-[90%] max-w-md">
@@ -107,26 +108,39 @@ const EditExam = () => {
                     </div>
                 </div>
             )}
-            {exam?.length === 0 ? (
-                <h1 className='text-2xl font-bold mt-5 text-center text-red-500'>
-                    You have not created any exam
-                </h1>
+
+            {/* Loader */}
+            {loading ? (
+                <div className="flex items-center justify-center min-h-[50vh]">
+                    <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500"></div>
+                </div>
             ) : (
-                <div className="flex flex-wrap justify-center items-center gap-8 w-full mt-12 max-w-6xl">
-                    <h1 className='text-2xl font-bold mt-5 text-white text-center w-full'>The list of exams you have created</h1>
-                    {exam.map((examItem) => (
-                        <Card
-                            key={examItem._id}
-                            title={[examItem.examName, examItem.subjectName]}
-                            date={examItem.startTime}
-                            marks={examItem.totalMarks}
-                            createdAt={examItem.createdAt}
-                            department={examItem.department}
-                            semester={examItem.semester}
-                            onClick={() => setDeleteConfirmId(examItem._id)}
-                            onEditClick={()=>navigate(`/teacherDashboard/Editexampaper/${examItem._id}`,{state:examItem._id})}
-                        />
-                    ))}
+                <div className="max-w-6xl mx-auto">
+                    <h1 className='text-3xl font-bold text-center text-white mb-8'>
+                        The list of exams you have created
+                    </h1>
+
+                    {exam.length === 0 ? (
+                        <h2 className='text-xl font-semibold text-center text-red-500'>
+                            You have not created any exam
+                        </h2>
+                    ) : (
+                        <div className="flex flex-col space-y-6">
+                            {exam.map((examItem) => (
+                                <Card
+                                    key={examItem._id}
+                                    title={[examItem.examName, examItem.subjectName]}
+                                    date={examItem.startTime}
+                                    marks={examItem.totalMarks}
+                                    createdAt={examItem.createdAt}
+                                    department={examItem.department}
+                                    semester={examItem.semester}
+                                    onClick={() => setDeleteConfirmId(examItem._id)}
+                                    onEditClick={() => navigate(`/teacherDashboard/Editexampaper/${examItem._id}`, { state: examItem._id })}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </div>

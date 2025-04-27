@@ -64,7 +64,7 @@ const TeacherBody = () => {
           />
           <Card
             title="Student Performance"
-            description={studentPerformance ? `Average Score: ${studentPerformance.averageScore}` : "Loading..."}
+            description="See the students perfomance in the exams that you have created"
             icon={<FaChartLine size={26} />}
             onClick={() => navigate("/teacherDashboard/studentPerformance")}
             color="bg-green-500"

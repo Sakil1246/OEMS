@@ -43,7 +43,7 @@ const Progress = () => {
         </button>
 
         {attemptedExams?.length > 0 && (
-          <h1 className="text-4xl font-extrabold text-center text-orange-400 mb-12">
+          <h1 className="text-4xl font-extrabold text-center text-white mb-12">
             Your Attempted Exams
           </h1>
         )}

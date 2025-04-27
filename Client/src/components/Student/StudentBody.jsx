@@ -163,10 +163,16 @@ const StudentBody = () => {
             color="bg-red-500"
             index={2}
             onClick={() => {
+              const now = new Date();
+              const attemptedIds = new Set(attemptedExams.map((a) => a._id));
+
               const missed = exams.filter((exam) => {
-                const now = new Date();
                 const endTime = parse(exam.endTime, "dd/MM/yyyy, hh:mm a", now);
-                return now > endTime && exam.department === studentDepartment;
+                return (
+                  exam.department === studentDepartment &&
+                  now > endTime &&
+                  !attemptedIds.has(exam.examId)
+                );
               });
               navigate("/studentdashboard/missedExams", { state: missed });
             }}
