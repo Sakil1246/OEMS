@@ -6,9 +6,6 @@ const bcrypt=require("bcrypt");
 require("dotenv").config();
 
 const nodemailer = require("nodemailer");
-
-
-
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   host: "smtp.gmail.com",
@@ -20,20 +17,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// const mailOptions = {
-//   from: "sakilahmed345677@gmail.com",
-//   to: "recipient@example.com",
-//   subject: "Hello from Nodemailer",
-//   text: "This is a test email sent using Nodemailer.",
-// };
-
-// transporter.sendMail(mailOptions, (error, info) => {
-//   if (error) {
-//     console.error("Error sending email: ", error);
-//   } else {
-//     console.log("Email sent: ", info.response);
-//   }
-// });
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 const otpStore = {};
 studentAuthRouter.post("/student/sendEmail", async (req, res) => {
@@ -79,7 +62,6 @@ studentAuthRouter.post("/student/verifyOTP", (req, res) => {
 
       const storedOTP = otpStore[email];
 
-      // Check if OTP exists and is still valid
       if (!storedOTP || storedOTP.expiresAt < Date.now()) {
           return res.status(400).json({ message: "OTP expired or invalid" });
       }
@@ -87,8 +69,6 @@ studentAuthRouter.post("/student/verifyOTP", (req, res) => {
       if (storedOTP.otp !== otp) {
           return res.status(400).json({ message: "Incorrect OTP" });
       }
-
-      // OTP is correct, remove from storage
       delete otpStore[email];
 
       res.json({ message: "OTP verified successfully" });
