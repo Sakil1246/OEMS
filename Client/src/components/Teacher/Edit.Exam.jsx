@@ -116,9 +116,9 @@ const EditExam = () => {
                 </div>
             ) : (
                 <div className="max-w-6xl mx-auto">
-                    <h1 className='text-3xl font-bold text-center text-white mb-8'>
+                   {exam.length!==0 &&( <h1 className='text-3xl font-bold text-center text-white mb-8'>
                         The list of exams you have created
-                    </h1>
+                    </h1>)}
 
                     {exam.length === 0 ? (
                         <h2 className='text-xl font-semibold text-center text-red-500'>
