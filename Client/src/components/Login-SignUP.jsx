@@ -104,10 +104,12 @@ const AuthForm = () => {
     try {
       if (role === "student") {
         await axios.post(Basic_URL + "student/sendEmail", { rollNo: rollNo }, { withCredentials: true });
+        alert("An OTP has been sent to your Gsuite-id");
       } else if (role === "teacher") {
         await axios.post(Basic_URL + "teacher/sendEmail", { email: email }, { withCredentials: true });
+        alert("An OTP has been sent to your email");
       }
-      alert("An OTP has been sent to your email");
+      
       setShowSendOtp(false);
       setShowOtpInput(true);
     } catch (e) {
