@@ -18,7 +18,7 @@ const ViewResult = () => {
       const res = await axios.get(`${Basic_URL}exam/${examId}/result-details`, {
         withCredentials: true
       });
-      console.log(res);
+      //console.log(res);
 
       setResult(res.data.data);
     } catch (err) {
@@ -53,6 +53,7 @@ const ViewResult = () => {
       fetchBatchmateScores();
     }
   };
+console.log(result);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -71,7 +72,7 @@ const ViewResult = () => {
         ) : (
           <>
             <div className="text-center text-xl font-semibold mt-4 mb-4">
-              <span className="text-green-400">Score:</span> {result.score ?? "N/A"}
+              <span className="text-green-400">Score:</span> {result.score +"/" ?? "N/A"}
             </div>
 
             <div className="text-center mb-6 text-sm">

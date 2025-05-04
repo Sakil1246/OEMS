@@ -11,7 +11,8 @@ const Progress = () => {
   const navigate = useNavigate();
   const [attemptedExams, setAttemptedExams] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  console.log(attemptedExams);
+  
   useEffect(() => {
     const fetchAttemptedExams = async () => {
       try {
