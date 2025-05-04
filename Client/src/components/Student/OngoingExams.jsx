@@ -48,12 +48,16 @@ const OngoingExams = () => {
       </button>
 
      
-      <p className="text-red-400 text-center font-semibold text-xl mb-10 mt-20">
+      {/* <p className="text-red-400 text-center font-semibold text-xl mb-10 mt-20">
         You can attempt the exams only before they start.
-      </p>
+      </p> */}
 
      
       {response.length > 0 ? (
+        <>
+        <p className="text-red-400 text-center font-semibold text-xl mb-10 mt-20">
+        You can attempt the exams only before they start.
+      </p>
         <div className="flex flex-wrap justify-center gap-8 w-full max-w-6xl">
           {response.map((exam) => (
             <Card
@@ -67,14 +71,17 @@ const OngoingExams = () => {
             />
           ))}
         </div>
+        </>
       ) : (
-        <div className="flex flex-col items-center justify-center bg-gray-800 rounded-2xl p-10 shadow-lg w-full max-w-md mt-10">
+        <div className="flex flex-col items-center justify-center bg-gray-800 rounded-2xl p-10 shadow-lg w-full max-w-md mt-36">
           <h1 className="text-3xl font-bold text-white mb-4">No Ongoing Exams</h1>
           <p className="text-gray-400 text-center mb-2">Currently there are no live exams available.</p>
           <p className="text-gray-500 text-center text-sm">Please check back later!</p>
         </div>
-      )}
+      )
+      }
     </div>
+    
   );
 };
 
