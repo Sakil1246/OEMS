@@ -532,7 +532,7 @@ examRouter.get("/student/:studentId/attempted-exams", async (req, res) => {
     const results = await examResult
       .find({ studentId: studentId })
       .lean();
-
+    //console.log(exams);
     const responseData = exams.map((examDoc) => {
       const result = results.find(
         (r) => r.examId.toString() === examDoc._id.toString()
@@ -543,6 +543,7 @@ examRouter.get("/student/:studentId/attempted-exams", async (req, res) => {
         examName: examDoc.examName,
         subjectName: examDoc.subjectName,
         startTime: examDoc.startTime,
+        totalMarks: examDoc.totalMarks,
         evaluated: !!result,
         score: result?.score || null,
       };

@@ -11,7 +11,7 @@ const Progress = () => {
   const navigate = useNavigate();
   const [attemptedExams, setAttemptedExams] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log(attemptedExams);
+  
   
   useEffect(() => {
     const fetchAttemptedExams = async () => {
@@ -19,7 +19,7 @@ const Progress = () => {
         const res = await axios.get(`${Basic_URL}student/${_id}/attempted-exams`, {
           withCredentials: true,
         });
-        console.log(res);
+        //console.log(res);
         
         setAttemptedExams((res.data.data || []).filter(Boolean));
       } catch (err) {
@@ -83,7 +83,7 @@ const Progress = () => {
                 {exam.evaluated && (
                   <p className="text-gray-300">
                     Score:{' '}
-                    <span className="font-semibold text-white">{exam.score}</span>
+                    <span className="font-semibold text-white">{exam.score +"/"+exam.totalMarks}</span>
                   </p>
                 )}
                 <button
@@ -94,6 +94,7 @@ const Progress = () => {
                         examId: exam._id,
                         examName: exam.examName,
                         subject: exam.subjectName,
+                        totalMarks: exam.totalMarks,
                       },
                     })
                   }

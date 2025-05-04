@@ -6,7 +6,7 @@ import { Basic_URL } from '../../utils/constants';
 const ViewResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId, examName, subject } = location.state;
+  const { examId, examName, subject,totalMarks } = location.state;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,7 @@ const ViewResult = () => {
       fetchBatchmateScores();
     }
   };
-console.log(result);
+//console.log(result);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -72,7 +72,7 @@ console.log(result);
         ) : (
           <>
             <div className="text-center text-xl font-semibold mt-4 mb-4">
-              <span className="text-green-400">Score:</span> {result.score +"/" ?? "N/A"}
+              <span className="text-green-400">Score:</span> {result.score +"/"+totalMarks ?? "N/A"}
             </div>
 
             <div className="text-center mb-6 text-sm">
