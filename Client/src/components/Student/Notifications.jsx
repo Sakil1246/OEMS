@@ -7,12 +7,12 @@ const Notifications = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center p-6 relative">
    
-      <button
-        className="absolute top-6 left-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-700 transition-all duration-300 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-md"
-        onClick={() => navigate(-1)}
-      >
-        ⬅ Back
-      </button>
+   <button
+          className="absolute top-6 left-6 text-blue-400 hover:text-blue-300 transition font-medium"
+          onClick={() => navigate(-1)}
+        >
+          ⬅ Back
+        </button>
 
     
       <div className="flex flex-col items-center justify-center flex-grow mt-20">

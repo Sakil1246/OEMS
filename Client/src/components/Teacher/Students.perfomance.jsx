@@ -87,39 +87,48 @@ const Studentsperfomance = () => {
     );
 
     return (
-        <div className='flex justify-center items-center flex-col'>
-            {loading ? (
-                <p className="text-2xl font-semibold text-white mt-8">Loading exams...</p>
-            ) : exam?.length === 0 ? (
-                <h1 className='text-2xl font-bold mt-5 text-center text-red-500'>
-                    No exam found 
-                </h1>
-            ) : (
-                <div className="flex flex-wrap justify-center items-center gap-8 w-full mt-12 max-w-6xl">
-                    <h1 className='text-2xl font-bold mt-5 text-white text-center w-full'>The list of exams you have created</h1>
-                    {exam.map((examItem) => (
-                        <Card
-                            key={examItem._id}
-                            title={[examItem.examName, examItem.subjectName]}
-                            date={examItem.startTime}
-                            marks={examItem.totalMarks}
-                            createdAt={examItem.createdAt}
-                            department={examItem.department}
-                            semester={examItem.semester}
-                            submissionCount={submissionCounts[examItem._id] || 0}
-                            onClick={() => navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, {
-                                state: {
-                                    examId: examItem._id,
-                                    examName: examItem.examName,
-                                    subjectName: examItem.subjectName,
-                                    marks: examItem.totalMarks
-                                }
-                            })}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
+        <>
+            <button
+                className="  ml-3 mt-2  text-blue-400 hover:text-blue-300 font-medium transition"
+                onClick={() => navigate(-1)}
+            >
+                ⬅ Back
+            </button>
+            <div className='flex  justify-center items-center flex-col'>
+
+                {loading ? (
+                    <p className="text-2xl font-semibold text-white mt-8">Loading exams...</p>
+                ) : exam?.length === 0 ? (
+                    <h1 className='text-2xl font-bold mt-5 text-center text-red-500'>
+                        No exam found
+                    </h1>
+                ) : (
+                    <div className="flex  flex-wrap justify-center items-center gap-8 w-full mt-12 max-w-6xl">
+                        <h1 className='text-2xl font-bold mt-5 text-white text-center w-full'>The list of exams you have created</h1>
+                        {exam.map((examItem) => (
+                            <Card
+                                key={examItem._id}
+                                title={[examItem.examName, examItem.subjectName]}
+                                date={examItem.startTime}
+                                marks={examItem.totalMarks}
+                                createdAt={examItem.createdAt}
+                                department={examItem.department}
+                                semester={examItem.semester}
+                                submissionCount={submissionCounts[examItem._id] || 0}
+                                onClick={() => navigate(`/teacherDashboard/teacher/exam/${examItem._id}/answers`, {
+                                    state: {
+                                        examId: examItem._id,
+                                        examName: examItem.examName,
+                                        subjectName: examItem.subjectName,
+                                        marks: examItem.totalMarks
+                                    }
+                                })}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 

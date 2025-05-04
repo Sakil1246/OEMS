@@ -130,8 +130,12 @@ const Answerevaluate = () => {
 
   return (
     <div className="bg-gray-800  min-h-screen ">
-      <button className='text-white absolute aml-5 mt-3 text-2xl' onClick={() => navigate(-1)}>⬅️Back</button>
-
+<button
+        className="absolute  left-6 text-blue-400 hover:text-blue-300 font-medium transition"
+        onClick={() => navigate(-1)}
+      >
+        ⬅ Back
+      </button>
       <div className="max-w-5xl  mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6 text-center text-white">Evaluate Answers</h1>
         <div className="sticky top-0 z-50 bg-slate-200 text-black py-3 px-6 w-fit mx-auto flex items-center justify-center shadow-md text-center font-bold text-lg">

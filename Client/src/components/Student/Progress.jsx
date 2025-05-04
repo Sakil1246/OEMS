@@ -37,7 +37,7 @@ const Progress = () => {
     <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen px-4 py-10">
       <div className="max-w-6xl mx-auto">
         <button
-          className="mb-6 text-blue-400 hover:text-blue-300 transition duration-300 font-medium"
+          className="mb-6  text-blue-400 hover:text-blue-300 transition duration-300 font-medium"
           onClick={() => navigate(-1)}
         >
           ⬅ Back
