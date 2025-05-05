@@ -645,5 +645,7 @@ examRouter.get('/exam/:examId/batchmate-scores', authStudent, async (req, res) =
   }
 });
 
-
+examRouter.post('student/exam/:examId/message',authStudent,async(req,res)=>{
+  
+})
 module.exports = examRouter;

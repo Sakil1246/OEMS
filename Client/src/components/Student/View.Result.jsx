@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Basic_URL } from '../../utils/constants';
+import Modalmessage from './Modal.message';
 
 const ViewResult = () => {
   const location = useLocation();
@@ -12,7 +13,7 @@ const ViewResult = () => {
   const [loading, setLoading] = useState(true);
   const [batchmateScores, setBatchmateScores] = useState(null);
   const [activeView, setActiveView] = useState('score');
-
+  const [showModal, setShowModal] = useState(false);
   const fetchResultDetails = async () => {
     try {
       const res = await axios.get(`${Basic_URL}exam/${examId}/result-details`, {
@@ -54,16 +55,18 @@ const ViewResult = () => {
     }
   };
   //console.log(result);
+  const handleMessage = () => {
 
+  }
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <button  onClick={() => navigate(-1)}>
+      <button onClick={() => navigate(-1)}>
         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
           <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
         </svg>
       </button>
 
-      <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
+      <div className="max-w-4xl relative mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
         <h2 className="text-3xl font-bold text-center mb-2 text-white">{examName}</h2>
         <p className="text-center text-xl text-orange-300 mb-2">{"Subject: " + subject}</p>
 
@@ -98,8 +101,9 @@ const ViewResult = () => {
               >
                 See Your Batchmate Scores
               </button>
-              <button className='bg-red-500 text-white py-2 px-4 rounded mt-4 ml-3 font-bold '>
-                Any doubts? Contact your instructor.
+              <button className='bg-red-500 text-white py-2 px-4 rounded mt-4 ml-4 ' onClick={() => setShowModal(true)}>
+                <span className=' font-bold'>Any doubts?</span>
+                <span> leave a message</span>
               </button>
             </div>
 
@@ -215,6 +219,10 @@ const ViewResult = () => {
           </>
         )}
       </div>
+      {showModal && (
+        <Modalmessage onClose={() => setShowModal(false)} examId={examId} />
+      )}
+
     </div>
   );
 };

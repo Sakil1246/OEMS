@@ -2,3 +2,4 @@ node_modules
 apiList.md
 .env
 backupRouter.md
+firebase.js
