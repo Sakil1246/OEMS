@@ -11,10 +11,10 @@ import { db } from '../../utils/firebase';
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 const TeacherBody = () => {
   const [examId,setExamId] = useState(null);
-  //const teacherId = useSelector((store) => store.teacher._id);
+  const teacherId = useSelector((store) => store.teacher._id);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
-
+const [messageList, setMessageList] = useState([]);
   const cardVariant = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 }
@@ -37,31 +37,39 @@ useEffect(() => {
   const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    //setMessageList(messages);
-    console.log("Messages:", messages);
+    setMessageList(messages.filter((message) => message.flag === 0 && message.teacherId === teacherId));
+    //console.log("Messages:", messages);
     
   });
 
   return () => unsubscribe();
 }, []);
-  const Card = ({ title, icon, color, description, onClick, index }) => (
-    <motion.div
-      variants={cardVariant}
-      initial="hidden"
-      animate="visible"
-      transition={{ duration: 0.6, delay: index * 0.2 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.97 }}
-      onClick={onClick}
-      className="cursor-pointer bg-gradient-to-br from-[#1c1c2c] to-[#2a2a3c] shadow-lg rounded-2xl p-6 flex flex-col items-center border border-gray-600 hover:shadow-[#4c4cff] transition-all duration-300"
-    >
-      <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white ${color}`}>
-        {icon}
-      </div>
-      <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title}</h3>
-      <p className="text-gray-300 text-sm text-center mt-2">{description}</p>
-    </motion.div>
-  );
+console.log(messageList);
+const Card = ({ title, icon, color, description, onClick, index }) => (
+  <motion.div
+    variants={cardVariant}
+    initial="hidden"
+    animate="visible"
+    transition={{ duration: 0.6, delay: index * 0.2 }}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.97 }}
+    onClick={onClick}
+    className="relative cursor-pointer bg-gradient-to-br from-[#1c1c2c] to-[#2a2a3c] shadow-lg rounded-2xl p-6 flex flex-col items-center border border-gray-600 hover:shadow-[#4c4cff] transition-all duration-300"
+  >
+    {title === "Notifications" && messageList.length > 0 && (
+      <span className="absolute top-0 left-0 bg-red-600 text-white text-sm font-bold rounded-full px-6 py-4 shadow-md">
+        {messageList.length}
+      </span>
+    )}
+    <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white ${color}`}>
+      {icon}
+    </div>
+    <h3 className="text-2xl font-semibold text-gray-50 mt-4">{title}</h3>
+    <p className="text-gray-300 text-sm text-center mt-2">{description}</p>
+  </motion.div>
+);
+
+
 
   return (
     <div className="bg-[#0F0F24] min-h-screen flex flex-col">
@@ -99,7 +107,7 @@ useEffect(() => {
           />
           <Card
             title="Notifications"
-            description={`${notifications.length} new announcements`}
+            description={`${messageList?.length} new notification(s)`}
             icon={<FaBell size={26} />}
             color="bg-red-500"
             
