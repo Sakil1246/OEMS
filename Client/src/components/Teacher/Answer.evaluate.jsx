@@ -103,6 +103,7 @@ const Answerevaluate = () => {
       });
       const updated = answers.map((a) => ({ ...a, evaluated: false, marksObtained: 0 }));
       setAnswers(updated);
+      setTotalMarksObtained(0);
     } catch (err) {
       console.error("Failed to reset all evaluations:", err);
     }

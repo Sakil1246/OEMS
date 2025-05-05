@@ -155,19 +155,7 @@ const Editexampaper = () => {
     sessionStorage.removeItem('visitedInsertQuestions');
     localStorage.removeItem('examDetails');
   };
-  // const createEmptyQuestion = (questionType = "Subjective") => ({
-  //   questionType,
-  //   questionFormat: "Text",
-  //   questionText: "",
-  //   questionImage: "",
-  //   bloomLevel: "",
-  //   marks: 5,
-  //   options: questionType !== "Subjective" ?
-  //     Array(4).fill(null).map(() => ({ text: "", image: "", format: "Text" }))
-  //     : [],
-  //   correctOptions: questionType !== "Subjective" ? "" : undefined,
-  // });
-
+ 
 
 
 
@@ -252,12 +240,16 @@ const Editexampaper = () => {
     }
   };
 
+  const handleSave = async () => {
+    
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F0F24] p-6">
       <div className="bg-white/100 shadow-lg rounded-xl p-8 w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Edit Exam</h1>
         <form className='bg-red-50'>
-          {/* Department */}
+          
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Department <span className="text-red-500">*</span>
@@ -579,7 +571,7 @@ const Editexampaper = () => {
             </button>
             <button
               type="button"
-              // onClick={handleSave}
+               onClick={handleSave}
               className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-all"
             >
               Save 
