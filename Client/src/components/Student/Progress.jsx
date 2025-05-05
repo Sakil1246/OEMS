@@ -96,6 +96,7 @@ const Progress = () => {
                         examName: exam.examName,
                         subject: exam.subjectName,
                         totalMarks: exam.totalMarks,
+                        teacherId: exam.teacherId,
                       },
                     })
                   }

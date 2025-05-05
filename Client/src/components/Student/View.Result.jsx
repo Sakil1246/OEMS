@@ -7,7 +7,7 @@ import Modalmessage from './Modal.message';
 const ViewResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId, examName, subject, totalMarks } = location.state;
+  const { examId, examName, subject, totalMarks, teacherId} = location.state;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -220,7 +220,7 @@ const ViewResult = () => {
         )}
       </div>
       {showModal && (
-        <Modalmessage onClose={() => setShowModal(false)} examId={examId} />
+        <Modalmessage onClose={() => setShowModal(false)} examId={examId} teacherId={teacherId} />
       )}
 
     </div>

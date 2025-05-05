@@ -5,10 +5,13 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { FaChalkboardTeacher, FaCalendarAlt, FaChartLine, FaBell } from "react-icons/fa";
 import { motion } from "framer-motion";
-
+import { useSelector } from "react-redux";
+import { Basic_URL } from "../../utils/constants";
+import { db } from '../../utils/firebase';
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 const TeacherBody = () => {
-  const [upcomingExams, setUpcomingExams] = useState([]);
-  const [studentPerformance, setStudentPerformance] = useState(null);
+  const [examId,setExamId] = useState(null);
+  //const teacherId = useSelector((store) => store.teacher._id);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
@@ -16,7 +19,31 @@ const TeacherBody = () => {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 }
   };
+//   const fetchExamList = async () => {
+//     try {
+//         const examlist = await axios.get(`${Basic_URL}teacher/${teacherId}/examlist`, { withCredentials: true });
+//         setExamId(examlist.data.data[0]._id);
+//     } catch (err) {
+//         console.error("Failed to fetch exam list:", err);
+//     } 
+// };
 
+// useEffect(() => {
+//     fetchExamList();
+// }, []);
+// console.log(examId);
+
+useEffect(() => {
+  const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //setMessageList(messages);
+    console.log("Messages:", messages);
+    
+  });
+
+  return () => unsubscribe();
+}, []);
   const Card = ({ title, icon, color, description, onClick, index }) => (
     <motion.div
       variants={cardVariant}

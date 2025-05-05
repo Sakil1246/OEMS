@@ -2,15 +2,25 @@ import React from 'react';
 import { db } from '../../utils/firebase';
 import { useSelector } from 'react-redux';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
-const Modalmessage = ({ onClose,examId }) => {
+const Modalmessage = ({ onClose,examId,teacherId }) => {
     const {_id}=useSelector((store)=>store.student)
-    const [message, setMessage] = React.useState('');
+    const [message, setMessage] = React.useState('');   
+    const flag=0;
     const handleSend=async()=>{
         try {
-            await addDoc(collection(db, "messages"), {
-              content: message,examId:examId,studentId:_id,
-              createdAt: Timestamp.now(),
-            });
+            const payload = {
+                content: message,
+                examId:examId,
+                studentId: _id,
+                teacherId:teacherId,
+                flag:flag,
+                createdAt: Timestamp.now(),
+              };
+              
+              console.log("Message payload:", payload);
+              
+              await addDoc(collection(db, "messages"), payload);
+              
             alert("Message sent successfully!");
             setMessage('');
             onClose();

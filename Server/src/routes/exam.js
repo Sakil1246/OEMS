@@ -546,6 +546,8 @@ examRouter.get("/student/:studentId/attempted-exams", async (req, res) => {
         totalMarks: examDoc.totalMarks,
         evaluated: !!result,
         score: result?.score || null,
+        teacherId: examDoc.teacherId,
+        
       };
     });
 
