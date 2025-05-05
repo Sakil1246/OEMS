@@ -6,7 +6,7 @@ import { Basic_URL } from '../../utils/constants';
 const ViewResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { examId, examName, subject,totalMarks } = location.state;
+  const { examId, examName, subject, totalMarks } = location.state;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,12 +53,14 @@ const ViewResult = () => {
       fetchBatchmateScores();
     }
   };
-//console.log(result);
+  //console.log(result);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <button className="mb-4 text-blue-400 underline" onClick={() => navigate(-1)}>
-        ⬅ Back
+      <button  onClick={() => navigate(-1)}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+        </svg>
       </button>
 
       <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
@@ -72,7 +74,7 @@ const ViewResult = () => {
         ) : (
           <>
             <div className="text-center text-xl font-semibold mt-4 mb-4">
-              <span className="text-green-400">Score:</span> {result.score +"/"+totalMarks ?? "N/A"}
+              <span className="text-green-400">Score:</span> {result.score + "/" + totalMarks ?? "N/A"}
             </div>
 
             <div className="text-center mb-6 text-sm">
@@ -85,16 +87,19 @@ const ViewResult = () => {
 
             <div className="text-center mb-4">
               <button
-                className={`bg-blue-500 text-white py-2 px-4 rounded mr-4 ${activeView === 'answers' ? 'bg-blue-700' : ''}`}
+                className={`bg-blue-500 text-white py-2 px-4 rounded mr-4 ${activeView === 'answers' ? 'bg-blue-900' : ''}`}
                 onClick={() => handleViewChange('answers')}
               >
                 See Your Answer Sheet
               </button>
               <button
-                className={`bg-green-500 text-white py-2 px-4 rounded ${activeView === 'batchmates' ? 'bg-green-700' : ''}`}
+                className={`bg-green-500 text-white py-2 px-4 rounded ${activeView === 'batchmates' ? 'bg-green-900' : ''}`}
                 onClick={() => handleViewChange('batchmates')}
               >
                 See Your Batchmate Scores
+              </button>
+              <button className='bg-red-500 text-white py-2 px-4 rounded mt-4 ml-3 font-bold '>
+                Any doubts? Contact your instructor.
               </button>
             </div>
 
@@ -129,10 +134,10 @@ const ViewResult = () => {
                               <li
                                 key={opt._id}
                                 className={`p-2 rounded-md border ${isCorrect
-                                    ? 'border-green-400 bg-green-800'
-                                    : isSelected
-                                      ? 'border-blue-400 bg-blue-800'
-                                      : 'border-gray-600 bg-gray-700'
+                                  ? 'border-green-400 bg-green-800'
+                                  : isSelected
+                                    ? 'border-blue-400 bg-blue-800'
+                                    : 'border-gray-600 bg-gray-700'
                                   }`}
                               >
                                 <span className="text-white">{String.fromCharCode(65 + index)}. {opt.text}</span>
