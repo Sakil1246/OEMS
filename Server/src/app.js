@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
-const authRouter = require("./routes/teacherAuth");
+const teacherAuthRouter = require("./routes/teacherAuthRouter");
 const studentAuthRouter = require("./routes/studentAuthRouter");
 const examRouter = require("./routes/examRouter");
 const cookieParser = require("cookie-parser");
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/teacher", authRouter);
+app.use("/teacher", teacherAuthRouter);
 app.use("/student", studentAuthRouter);
 app.use("/", examRouter);
 app.use("/admin", adminRouter);
