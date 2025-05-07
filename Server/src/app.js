@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const authRouter = require("./routes/teacherAuth");
-const studentAuthRouter = require("./routes/studentAuth");
-const examRouter = require("./routes/exam");
+const studentAuthRouter = require("./routes/studentAuthRouter");
+const examRouter = require("./routes/examRouter");
 const cookieParser = require("cookie-parser");
 const adminRouter = require("./routes/adminAuth");
 const cors = require("cors");
@@ -21,14 +21,14 @@ app.use(
   })
 );
 
-app.use(express.json()); // to convert json to js object that comes from req.body
+app.use(express.json()); 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/", authRouter);
-app.use("/", studentAuthRouter);
+app.use("/teacher", authRouter);
+app.use("/student", studentAuthRouter);
 app.use("/", examRouter);
-app.use("/", adminRouter);
+app.use("/admin", adminRouter);
 
 const PORT = process.env.PORT ;
 

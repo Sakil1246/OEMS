@@ -44,7 +44,7 @@ useEffect(() => {
 
   return () => unsubscribe();
 }, []);
-console.log(messageList);
+//console.log(messageList);
 const Card = ({ title, icon, color, description, onClick, index }) => (
   <motion.div
     variants={cardVariant}
@@ -110,7 +110,7 @@ const Card = ({ title, icon, color, description, onClick, index }) => (
             description={`${messageList?.length} new notification(s)`}
             icon={<FaBell size={26} />}
             color="bg-red-500"
-            
+             onClick={()=> navigate("/teacherDashboard/notifications", { state: { messageList } })}
             index={3}
           />
         </motion.div>

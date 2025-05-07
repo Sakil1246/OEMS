@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 const otpStore = {};
-authRouter.post("/teacher/sendEmail", async (req, res) => {
+authRouter.post("/sendEmail", async (req, res) => {
   try {
     //console.log(req.body)
       const { email } = req.body;
@@ -51,7 +51,7 @@ authRouter.post("/teacher/sendEmail", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 });
-authRouter.post("/teacher/verifyOTP", (req, res) => {
+authRouter.post("/verifyOTP", (req, res) => {
   try {
       const { email, otp } = req.body;
       if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
@@ -72,7 +72,7 @@ authRouter.post("/teacher/verifyOTP", (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 });
- authRouter.post("/teacher/signup",async (req,res)=>{
+ authRouter.post("/signup",async (req,res)=>{
     try{
         validateTeacherSignupData(req);
         const {password,firstName,lastName,email,department}=req.body;
@@ -100,7 +100,7 @@ authRouter.post("/teacher/verifyOTP", (req, res) => {
     }
  })
 
- authRouter.post("/teacher/login",async(req,res)=>{
+ authRouter.post("/login",async(req,res)=>{
     try{
         const {email,password}=req.body;
         const teacher=await Teacher.findOne({email:email});
@@ -123,7 +123,7 @@ authRouter.post("/teacher/verifyOTP", (req, res) => {
  })
 
 
- authRouter.post("/teacher/logout",async(req,res)=>{
+ authRouter.post("/logout",async(req,res)=>{
     res.cookie("token",null,{expires:new Date(Date.now())});
     res.send("Logged out successfully");
  })

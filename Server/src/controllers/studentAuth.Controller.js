@@ -1,5 +1,3 @@
-const express=require("express");
-const studentAuthRouter=express.Router();
 const {validateStudentSignupData}=require("../utils/validation");
 const Student=require("../model/student");
 const bcrypt=require("bcrypt");
@@ -19,9 +17,9 @@ const transporter = nodemailer.createTransport({
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 const otpStore = {};
-studentAuthRouter.post("/student/sendEmail", async (req, res) => {
+const sendEmail= async (req, res) => {
   try {
-    //console.log(req.body)
+    
       const { rollNo } = req.body;
       if (!rollNo) return res.status(400).json({ message: "Roll number is required" });
 
@@ -54,8 +52,8 @@ studentAuthRouter.post("/student/sendEmail", async (req, res) => {
       console.error("Error: ", error.message);
       res.status(500).json({ message: "Internal server error" });
   }
-});
-studentAuthRouter.post("/student/verifyOTP", (req, res) => {
+};
+const verifyOTP= (req, res) => {
   try {
       const { email, otp } = req.body;
       if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
@@ -76,8 +74,8 @@ studentAuthRouter.post("/student/verifyOTP", (req, res) => {
       console.error("Error verifying OTP: ", error.message);
       res.status(500).json({ message: "Internal server error" });
   }
-});
-studentAuthRouter.post("/student/signup", async (req, res) => {
+};
+const signup= async (req, res) => {
   try {
       validateStudentSignupData(req);
       const { password, firstName, lastName, department } = req.body;
@@ -106,9 +104,9 @@ studentAuthRouter.post("/student/signup", async (req, res) => {
   } catch (err) {
       res.status(400).send("ERROR: " + err.message);
   }
-});
+};
 
-studentAuthRouter.post("/student/login", async (req, res) => {
+const login= async (req, res) => {
     try {
       let { rollNo, password } = req.body;
       rollNo = rollNo.toLowerCase();
@@ -130,12 +128,18 @@ studentAuthRouter.post("/student/login", async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: "Server error. Please try again later." });
     }
-  });
+  };
   
 
 
- studentAuthRouter.post("/student/logout",async(req,res)=>{
+ const logout=async(req,res)=>{
     res.cookie("token",null,{expires:new Date(Date.now())});
     res.send("Logged out successfully");
- })
-module.exports=studentAuthRouter;
+ }
+module.exports={
+    signup,
+    login,
+    logout,
+    sendEmail,
+    verifyOTP
+}
