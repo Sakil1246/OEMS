@@ -55,9 +55,7 @@ const ViewResult = () => {
     }
   };
   //console.log(result);
-  const handleMessage = () => {
-
-  }
+  
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <button onClick={() => navigate(-1)}>

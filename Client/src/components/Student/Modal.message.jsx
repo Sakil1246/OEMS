@@ -15,10 +15,7 @@ const Modalmessage = ({ onClose,examId,teacherId }) => {
                 teacherId:teacherId,
                 flag:flag,
                 createdAt: Timestamp.now(),
-              };
-              
-              console.log("Message payload:", payload);
-              
+              };   
               await addDoc(collection(db, "messages"), payload);
               
             alert("Message sent successfully!");

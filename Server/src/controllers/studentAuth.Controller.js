@@ -136,10 +136,32 @@ const login= async (req, res) => {
     res.cookie("token",null,{expires:new Date(Date.now())});
     res.send("Logged out successfully");
  }
+
+ const getStudentsByIds = async (req, res) => {
+  try {
+      const ids = req.body.ids;
+      const students = await Student.find({ _id: { $in: ids } }).select("_id firstName lastName rollNo");
+
+      const studentMap = {};
+      students.forEach(student => {
+          studentMap[student._id] = {
+              firstName: student.firstName,
+              lastName: student.lastName,
+              rollNo: student.rollNo,
+          };
+      });
+
+      res.json(studentMap);
+  } catch (err) {
+      console.error("Error fetching students:", err);
+      res.status(500).json({ message: "Server error" });
+  }
+};
 module.exports={
     signup,
     login,
     logout,
     sendEmail,
-    verifyOTP
+    verifyOTP,
+    getStudentsByIds
 }

@@ -7,6 +7,7 @@ studentAuthRouter.post("/verifyOTP", studentAuthController.verifyOTP);
 studentAuthRouter.post("/signup", studentAuthController.signup);
 studentAuthRouter.post("/login", studentAuthController.login);
 studentAuthRouter.post("/logout", studentAuthController.logout);
+studentAuthRouter.post("/details", studentAuthController.getStudentsByIds);
 
   
 module.exports=studentAuthRouter;
