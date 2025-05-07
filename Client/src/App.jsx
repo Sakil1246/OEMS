@@ -18,6 +18,7 @@ import StartExam from "./components/Student/StartExam";
 import OngoingExams from "./components/Student/OngoingExams";
 import MissedExams from "./components/Student/MissedExams";
 import Notifications from "./components/Student/Notifications";
+import TeacherNotifications from "./components/Teacher/TeacherNotifications.jsx";
 import Progress from "./components/Student/Progress";
 import TeacherExamOption from "./components/Teacher/Teacher.Exam.Option";
 import EditExam from "./components/Teacher/Edit.Exam";
@@ -71,6 +72,7 @@ function App() {
             <Route path="studentPerformance" element={<Studentsperfomance/>}/>
             <Route path="teacher/exam/:examId/answers" element={<Answersubmittingstudents />} />
             <Route path="teacher/answer/evaluate" element={<Answerevaluate />} />
+            <Route path="notifications" element={<TeacherNotifications />} />
           </Route>}
 
           
