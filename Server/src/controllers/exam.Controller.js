@@ -484,6 +484,42 @@ const studentExamMessage = async (req, res) => {
 
 
 
+const getStudentAnswers= async (req, res) => {
+  const { examId, studentId } = req.params;
+
+  try {
+    const answers = await Answer.find({ examId, studentId })
+      .populate({
+        path: 'questionId',
+        model: 'Question'
+      });
+
+    const evaluatedAnswers = answers.map(ans => {
+      const q = ans.questionId;
+      const isAutoEvaluated = (
+        q?.questionType === 'MCQ' &&
+        q.correctOptions === parseInt(ans.selectedOption) &&
+        !ans.evaluated
+      );
+
+      if (isAutoEvaluated) {
+        ans.marksObtained = q.marks;
+        ans.evaluated = true;
+        ans.save(); 
+      }
+
+      return ans;
+    });
+
+    res.status(200).json({ data: evaluatedAnswers });
+  } catch (err) {
+    console.error("Error fetching answers with questions:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 module.exports = {
   uploadExamImage,
   upload,
@@ -507,4 +543,5 @@ module.exports = {
   updateResults,
   getBatchmateScores,
   studentExamMessage,
+  getStudentAnswers,
 };

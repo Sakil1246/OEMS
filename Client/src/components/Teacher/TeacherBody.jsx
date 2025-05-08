@@ -21,6 +21,7 @@ useEffect(() => {
   const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setNotifications(messages.filter((message) =>  message.teacherId === teacherId));
     setMessageList(messages.filter((message) => message.flag === 0 && message.teacherId === teacherId));    
   });
 
@@ -92,7 +93,7 @@ const Card = ({ title, icon, color, description, onClick, index }) => (
             description={`${messageList?.length} new notification(s)`}
             icon={<FaBell size={26} />}
             color="bg-red-500"
-             onClick={()=> navigate("/teacherDashboard/notifications", { state: { messageList } })}
+             onClick={()=> navigate("/teacherDashboard/notifications", { state: { notifications } })}
             index={3}
           />
         </motion.div>
