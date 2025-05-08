@@ -64,8 +64,6 @@ const StudentBody = () => {
       setAttemptedExams((res.data.data || []).filter(Boolean));
     } catch (err) {
       console.error('Error fetching attempted exams:', err);
-    } finally {
-      setLoading(false);
     }
   };
 

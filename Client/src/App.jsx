@@ -32,6 +32,8 @@ import ScrollToTop from "./components/Scroll_to_top.jsx";
 function App() {
   const teacher = useSelector((state) => state.teacher);
   const student = useSelector((state) => state.student);
+  console.log(student);
+  
   return (
     <Provider store={store}>
       <BrowserRouter>
@@ -43,7 +45,6 @@ function App() {
 
           
           {student &&
-
             <Route path="/studentdashboard" element={<StudentDashBoard />} >
               <Route index element={<StudentBody />} />
               <Route path="upcomingExams" element={<UpcomingExams />} />
@@ -53,7 +54,7 @@ function App() {
               <Route path="notifications" element={<Notifications/>} />
               <Route path="progress/view-result" element={<ViewResult />} />
             </Route>
-
+            
 
           }
           {student &&<Route path="termsCondition" element={<TermsCondition />} />}
