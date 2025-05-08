@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { db } from '../../utils/firebase';
 import { useSelector } from 'react-redux';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 const Modalmessage = ({ onClose,examId,teacherId }) => {
     const {_id}=useSelector((store)=>store.student)
-    const [message, setMessage] = React.useState('');   
+    const [message, setMessage] = useState('');  
+    const [type, setType] = useState('');
     const flag=0;
     const handleSend=async()=>{
         try {
@@ -15,6 +16,7 @@ const Modalmessage = ({ onClose,examId,teacherId }) => {
                 teacherId:teacherId,
                 flag:flag,
                 createdAt: Timestamp.now(),
+                type:type,
               };   
               await addDoc(collection(db, "messages"), payload);
               
@@ -37,6 +39,13 @@ const Modalmessage = ({ onClose,examId,teacherId }) => {
                     </svg>
                 </button>
                 <h1 className="text-lg font-semibold mb-4">Leave message/doubts to your instructor</h1>
+                <label className="text-sm font-semibold mb-2">Message Type:</label>
+                <select className='w-full h-10 bg-gray-800 text-white p-2 rounded-lg mb-4' onChange={(e)=>setType(e.target.value)} value={type}>
+                    <option value="query">Select</option>
+                    <option value="doubt">Doubt</option>
+                    <option value="message">Message</option>
+                    <option value="feedback">Feedback</option>
+                </select>
                 <textarea
                     value={message}
                     onChange={(e)=>setMessage(e.target.value)}

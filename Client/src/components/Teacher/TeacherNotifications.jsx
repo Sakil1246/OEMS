@@ -3,20 +3,22 @@ import axios from "axios";
 import { FaBell } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { Basic_URL } from "../../utils/constants";
-import Card from "./Card"; // Import Card component
+import Card from "./Card"; 
+import { useSelector } from "react-redux";
 
 const TeacherNotifications = () => {
-    const location = useLocation();
-    const { notifications } = location.state || { notifications: [] };
+    const notifications  = useSelector((store) => store.teacherNotification);
     const [studentMap, setStudentMap] = useState({});
     const [selectedTab, setSelectedTab] = useState("unread"); 
 
+
+    
     const filteredMessages =
         selectedTab === "unread"
             ? notifications.filter((msg) => msg.flag === 0)
             : notifications.filter((msg) => msg.flag === 1);
 
-    // Fetch student info
+   
     useEffect(() => {
         const uniqueIds = [...new Set(notifications.map((m) => m.studentId))];
         const fetchStudentInfo = async () => {
@@ -30,12 +32,12 @@ const TeacherNotifications = () => {
         if (uniqueIds.length) fetchStudentInfo();
     }, [notifications]);
 
-    // Handle deleting a message (update local state)
+   
     const handleDeleteMessage = (messageId) => {
-        // Filter out the deleted message from the list of messages
+        
         const updatedMessages = notifications.filter(msg => msg.id !== messageId);
-        // Update the state with the new list of messages
-        setSelectedTab("unread"); // You can set this to "read" or whatever tab you are viewing
+     
+        setSelectedTab("unread");
         notifications.splice(0, notifications.length, ...updatedMessages);
     };
 
@@ -64,7 +66,7 @@ const TeacherNotifications = () => {
                 </button>
             </div>
 
-            {/* Messages */}
+      
             <div className="flex flex-col gap-4 w-full items-center">
                 {filteredMessages.length > 0 ? (
                     <>
@@ -79,7 +81,8 @@ const TeacherNotifications = () => {
                                 icon={<FaBell size={26} />}
                                 content={message.content}
                                 studentInfo={studentMap[message.studentId]}
-                                onDelete={handleDeleteMessage} // Pass the delete handler to Card
+                                onDelete={handleDeleteMessage} 
+                                flag={message.flag}
                             />
                         ))}
                     </>

@@ -5,12 +5,13 @@ import adminReducer from "./adminSlice";
 import studentReducer from "./studentSlice";
 import teacherReducer from "./teacherSlice";
 import { combineReducers } from "redux";
-
+import teacherNotificationReducer from "./teacher.notificationSlice";
 // Combine reducers
 const rootReducer = combineReducers({
   admin: adminReducer,
   student: studentReducer,
   teacher: teacherReducer,
+  teacherNotification: teacherNotificationReducer,
 });
 
 // Persist config

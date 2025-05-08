@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 import { FaBell, FaTimes } from "react-icons/fa";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase"; 
 
-const Card = ({ icon, studentInfo, type, content, messageId, onDelete }) => {
+const Card = ({ icon, studentInfo, type, content, messageId, onDelete ,flag}) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleViewMessage = () => {
+    const handleViewMessage = async () => {
         setIsOpen(true);
+    
+        try {
+            const messageRef = doc(db, "messages", messageId);
+            await updateDoc(messageRef, { flag: 1 });
+            
+            console.log("Flag updated to 1 for message", messageId);
+        } catch (err) {
+            console.error("Failed to update flag:", err);
+        }
     };
 
     const handleDeleteMessage = async () => {

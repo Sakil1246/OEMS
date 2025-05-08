@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChalkboardTeacher, FaCalendarAlt, FaChartLine, FaBell } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { db } from '../../utils/firebase';
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { addTeacherNotification } from "../../utils/teacher.notificationSlice";
 const TeacherBody = () => {
   const [examId,setExamId] = useState(null);
   const teacherId = useSelector((store) => store.teacher._id);
-  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
+  const dispatch=useDispatch();
 const [messageList, setMessageList] = useState([]);
   const cardVariant = {
     hidden: { opacity: 0, y: 50 },
@@ -21,13 +22,14 @@ useEffect(() => {
   const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    setNotifications(messages.filter((message) =>  message.teacherId === teacherId));
-    setMessageList(messages.filter((message) => message.flag === 0 && message.teacherId === teacherId));    
+  const notifications=messages.filter((message) =>  message.teacherId === teacherId);
+    setMessageList(messages.filter((message) => message.flag === 0 && message.teacherId === teacherId));  
+     dispatch(addTeacherNotification(notifications))
   });
 
   return () => unsubscribe();
 }, []);
-console.log(messageList);
+ console.log(messageList);
 const Card = ({ title, icon, color, description, onClick, index }) => (
   <motion.div
     variants={cardVariant}
@@ -93,7 +95,7 @@ const Card = ({ title, icon, color, description, onClick, index }) => (
             description={`${messageList?.length} new notification(s)`}
             icon={<FaBell size={26} />}
             color="bg-red-500"
-             onClick={()=> navigate("/teacherDashboard/notifications", { state: { notifications } })}
+             onClick={()=> navigate("/teacherDashboard/notifications")}
             index={3}
           />
         </motion.div>
