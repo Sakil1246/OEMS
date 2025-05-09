@@ -15,12 +15,12 @@ const TeacherNotifications = () => {
     
     const filteredMessages =
         selectedTab === "unread"
-            ? notifications.filter((msg) => msg.flag === 0)
-            : notifications.filter((msg) => msg.flag === 1);
+            ? notifications?.filter((msg) => msg.flag === 0)
+            : notifications?.filter((msg) => msg.flag === 1);
 
    
     useEffect(() => {
-        const uniqueIds = [...new Set(notifications.map((m) => m.studentId))];
+        const uniqueIds = [...new Set(notifications?.map((m) => m.studentId))];
         const fetchStudentInfo = async () => {
             try {
                 const res = await axios.post(Basic_URL + "student/details", { ids: uniqueIds });
@@ -68,7 +68,7 @@ const TeacherNotifications = () => {
 
       
             <div className="flex flex-col gap-4 w-full items-center">
-                {filteredMessages.length > 0 ? (
+                {filteredMessages?.length > 0 ? (
                     <>
                         <p className="text-gray-100 text-lg">
                             {selectedTab === "unread" ? "Unread messages." : "Read messages."}
