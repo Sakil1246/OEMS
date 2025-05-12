@@ -36,7 +36,7 @@ const Editexampaper = () => {
       return Array(5).fill(null).map(() => createEmptyQuestion("Subjective"));
     }
   };
-  const [questions, setQuestions] = useState(loadSavedQuestions() || null);
+  const [questions, setQuestions] = useState([]);
 
 
   const fetchExam = async () => {
@@ -60,39 +60,45 @@ const Editexampaper = () => {
       console.error('Failed to fetch exam:', error);
     }
   };
+  
   const fetchQuestions = async () => {
-    try {
-      const res = await axios.get(`${Basic_URL}teacher/fetchquestions/${id}`, {
-        withCredentials: true,
-      });
+  try {
+    const res = await axios.get(`${Basic_URL}teacher/fetchquestions/${id}`, {
+      withCredentials: true,
+    });
 
-      
-      const formattedQuestions = res.data.data.map(q => ({
-        ...q,
-        options: q.options || [
-          { text: "", image: "", format: "Text" },
-          { text: "", image: "", format: "Text" },
-          { text: "", image: "", format: "Text" },
-          { text: "", image: "", format: "Text" }
-        ],
-        correctOptions: q.correctOptions || "",
-        questionText: q.questionText || "",
-        questionType: q.questionType || "MCQ",
-        questionFormat: q.questionFormat || "Text",
-        bloomLevel: q.bloomLevel || "Remember",
-        marks: q.marks || 1,
-      }));
+    const formattedQuestions = res.data.data.map(q => ({
+      ...q,
+      options: q.options || [
+        { text: "", image: "", format: "Text" },
+        { text: "", image: "", format: "Text" },
+        { text: "", image: "", format: "Text" },
+        { text: "", image: "", format: "Text" }
+      ],
+      correctOptions: q.correctOptions || "",
+      questionText: q.questionText || "",
+      questionType: q.questionType || "MCQ",
+      questionFormat: q.questionFormat || "Text",
+      bloomLevel: q.bloomLevel || "Remember",
+      marks: q.marks || 1,
+    }));
 
-      setQuestions(formattedQuestions);
-    } catch (error) {
-      console.error("Failed to fetch question:", error);
-    }
-  };
+    setQuestions(formattedQuestions);
+    localStorage.setItem("questions", JSON.stringify(formattedQuestions));
+  } catch (error) {
+    console.error("Failed to fetch question, loading from localStorage instead:", error);
+    setQuestions(loadSavedQuestions());
+  }
+};
+
 
   useEffect(() => {
     fetchExam();
     fetchQuestions();
   }, []);
+
+console.log(exam);
+console.log(questions);
 
   const [examDetails, setExamDetails] = useState({
     department: '',

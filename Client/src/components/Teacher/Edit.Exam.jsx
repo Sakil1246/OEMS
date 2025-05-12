@@ -83,7 +83,7 @@ const EditExam = () => {
     return (
         <div className='bg-gray-900 min-h-screen px-4 py-6'>
 
-            {/* Delete Confirm Popup */}
+           
             {deleteConfirmId && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-[90%] max-w-md">
@@ -109,7 +109,6 @@ const EditExam = () => {
                 </div>
             )}
 
-            {/* Loader */}
             {loading ? (
                 <div className="flex items-center justify-center min-h-[50vh]">
                     <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-500"></div>
