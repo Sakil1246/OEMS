@@ -7,12 +7,16 @@ const Modalmessage = ({ onClose, examId, teacherId }) => {
     const [message, setMessage] = useState('');
     const [type, setType] = useState('');
     const [typeError, setTypeError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const flag = 0;
     const handleSend = async () => {
         if (!type) {
             setTypeError(true);
             return;
         }
+
+        setLoading(true);
         try {
             const payload = {
                 content: message,
@@ -30,8 +34,11 @@ const Modalmessage = ({ onClose, examId, teacherId }) => {
             onClose();
         } catch (err) {
             console.error("Error saving message:", err);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
     return (
         <div className='fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center'>
             <div className='w-11/12  max-w-xl bg-slate-200 text-black p-6 rounded-lg shadow-lg relative'>
@@ -60,7 +67,13 @@ const Modalmessage = ({ onClose, examId, teacherId }) => {
                     className='w-full h-40 bg-gray-800 text-white p-2 rounded-lg mb-4'
                     placeholder='Type your message here...'
                 />
-                <button className='bg-blue-500 text-white py-2 px-4 rounded' onClick={handleSend}>Send Message</button>
+                <button
+                    className={`bg-blue-500 text-white py-2 px-4 rounded ${loading ? ' cursor-not-allowed' : ''}`}
+                    onClick={handleSend}
+                    disabled={loading}
+                >
+                    {loading ? <span className="loading loading-spinner text-error"></span> : 'Send Message'}
+                </button>
             </div>
         </div>
     );
