@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // Uses localStorage
+import storage from "redux-persist/lib/storage"; 
 import adminReducer from "./adminSlice";
 import studentReducer from "./studentSlice";
 import teacherReducer from "./teacherSlice";
