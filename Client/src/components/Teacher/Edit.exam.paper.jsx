@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Basic_URL } from '../../utils/constants';
 import { useLocation } from 'react-router-dom';
 import { parse, format } from 'date-fns';
-
 import DatePicker from 'react-datepicker';
 
 const Editexampaper = () => {
@@ -27,6 +26,9 @@ const Editexampaper = () => {
       : [],
     correctOptions: questionType !== "Subjective" ? "" : undefined,
   });
+
+
+
   const loadSavedQuestions = () => {
     try {
       const savedQuestions = JSON.parse(localStorage.getItem("questions")) || [];
@@ -60,36 +62,36 @@ const Editexampaper = () => {
       console.error('Failed to fetch exam:', error);
     }
   };
-  
+
   const fetchQuestions = async () => {
-  try {
-    const res = await axios.get(`${Basic_URL}teacher/fetchquestions/${id}`, {
-      withCredentials: true,
-    });
+    try {
+      const res = await axios.get(`${Basic_URL}teacher/fetchquestions/${id}`, {
+        withCredentials: true,
+      });
+      //console.log(res.data.data.questions);
+      const formattedQuestions = res.data.data.questions.map(q => ({
+        ...q,
+        options: q.options || [
+          { text: "", image: "", format: "Text" },
+          { text: "", image: "", format: "Text" },
+          { text: "", image: "", format: "Text" },
+          { text: "", image: "", format: "Text" }
+        ],
+        correctOptions: q.correctOptions || "",
+        questionText: q.questionText || "",
+        questionType: q.questionType || "MCQ",
+        questionFormat: q.questionFormat || "Text",
+        bloomLevel: q.bloomLevel || "Remember",
+        marks: q.marks || 1,
+      }));
 
-    const formattedQuestions = res.data.data.map(q => ({
-      ...q,
-      options: q.options || [
-        { text: "", image: "", format: "Text" },
-        { text: "", image: "", format: "Text" },
-        { text: "", image: "", format: "Text" },
-        { text: "", image: "", format: "Text" }
-      ],
-      correctOptions: q.correctOptions || "",
-      questionText: q.questionText || "",
-      questionType: q.questionType || "MCQ",
-      questionFormat: q.questionFormat || "Text",
-      bloomLevel: q.bloomLevel || "Remember",
-      marks: q.marks || 1,
-    }));
-
-    setQuestions(formattedQuestions);
-    localStorage.setItem("questions", JSON.stringify(formattedQuestions));
-  } catch (error) {
-    console.error("Failed to fetch question, loading from localStorage instead:", error);
-    setQuestions(loadSavedQuestions());
-  }
-};
+      setQuestions(formattedQuestions);
+      localStorage.setItem("questions", JSON.stringify(formattedQuestions));
+    } catch (error) {
+      console.error("Failed to fetch question, loading from localStorage instead:", error);
+      setQuestions(loadSavedQuestions());
+    }
+  };
 
 
   useEffect(() => {
@@ -97,8 +99,8 @@ const Editexampaper = () => {
     fetchQuestions();
   }, []);
 
-console.log(exam);
-console.log(questions);
+  //console.log(exam);
+  //console.log(questions);
 
   const [examDetails, setExamDetails] = useState({
     department: '',
@@ -161,7 +163,7 @@ console.log(questions);
     sessionStorage.removeItem('visitedInsertQuestions');
     localStorage.removeItem('examDetails');
   };
- 
+
 
 
 
@@ -246,16 +248,76 @@ console.log(questions);
     }
   };
 
+  
   const handleSave = async () => {
-    
+  setErrorMessage(""); // Reset error message
+
+  try {
+    // Validate required exam fields
+    const requiredFields = ['department', 'semester', 'examName', 'startTime', 'duration', 'subjectName', 'totalMarks'];
+    const newErrors = {};
+
+    requiredFields.forEach((field) => {
+      if (!examDetails[field]) {
+        newErrors[field] = 'This field is required';
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Upload all selected files before saving questions
+    const fileUploadPromises = Object.keys(selectedFiles).map(async (fileKey) => {
+      const [qIndexStr, part] = fileKey.split("-");
+      const qIndex = parseInt(qIndexStr, 10);
+      const optIndex = part?.startsWith("opt") ? parseInt(part.split("opt-")[1], 10) : null;
+      const field = "image"; // Since your system supports only images as files for now
+
+      await handleFileUpload(qIndex, field, optIndex);
+    });
+
+    await Promise.all(fileUploadPromises);
+
+    // Update Exam Details
+    await axios.put(`${Basic_URL}teacher/updateexam/${id}`, examDetails, {
+      withCredentials: true,
+    });
+
+    // Update Questions
+    await axios.put(`${Basic_URL}teacher/updatequestions/${id}`, {
+      questions,
+    }, {
+      withCredentials: true,
+    });
+
+    // Notify success
+    alert("Exam and questions saved successfully!");
+
+    // Optionally clear local storage
+    localStorage.removeItem("questions");
+    localStorage.removeItem("examDetails");
+
+  } catch (error) {
+    console.error("Error saving exam and questions:", error);
+    setErrorMessage("Failed to save exam. Please try again.");
   }
+};
+
+
+
+const handleAddQuestion = () => {
+  const newQuestion = createEmptyQuestion("Subjective"); // Or default type
+  setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F0F24] p-6">
       <div className="bg-white/100 shadow-lg rounded-xl p-8 w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Edit Exam</h1>
         <form className='bg-red-50'>
-          
+
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Department <span className="text-red-500">*</span>
@@ -401,41 +463,47 @@ console.log(questions);
               <select
                 value={q.questionType}
                 onChange={(e) => handleQuestionChange(qIndex, "questionType", e.target.value)}
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-white"
               >
                 <option value="MCQ">MCQ</option>
                 <option value="MSQ">MSQ</option>
                 <option value="Subjective">Subjective</option>
               </select>
 
-              {/* Question Format */}
+
               <label className="block mt-2 font-medium text-gray-500 mb-1">Question Format</label>
               <select
                 value={q.questionFormat}
                 onChange={(e) => handleQuestionChange(qIndex, "questionFormat", e.target.value)}
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-white"
               >
                 <option value="Text">Text</option>
                 <option value="Image">Image</option>
               </select>
 
-              
+
               <label className="block text-lg font-medium text-gray-500 mt-4">Enter Question</label>
               <input
                 type="text"
                 value={q.questionText}
                 onChange={(e) => handleQuestionChange(qIndex, "questionText", e.target.value)}
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-white"
               />
 
-              {/* File Upload for Image Questions */}
+
               {q.questionFormat === "Image" && (
                 <>
+
                   <input
                     type="file"
                     onChange={(e) => handleFileSelect(e.target.files[0], qIndex, "questionImage")}
-                    className="mt-2"
+                    className="mt-2 text-white"
                   />
+                  {q.questionImage && (<img
+                    src={q.questionImage}
+                    alt="Preview"
+                    className="w-32 h-32 object-cover mt-2"
+                  />)}
                   {selectedFiles[`${qIndex}-q`] && (
                     <div className="mt-2">
                       <img
@@ -463,7 +531,7 @@ console.log(questions);
                 </>
               )}
 
-              {/* Options (for MCQ and MSQ) */}
+
               {q.questionType !== "Subjective" &&
                 q.options.map((opt, optIndex) => (
                   <div key={optIndex} className="block mt-2 font-medium text-gray-500 mb-1">
@@ -471,7 +539,7 @@ console.log(questions);
                     <select
                       value={opt.format}
                       onChange={(e) => handleOptionChange(qIndex, optIndex, "format", e.target.value)}
-                      className="w-full border p-2 rounded"
+                      className="w-full border p-2 rounded text-white"
                     >
                       <option value="Text">Text</option>
                       <option value="Image">Image</option>
@@ -482,15 +550,20 @@ console.log(questions);
                         type="text"
                         value={opt.text}
                         onChange={(e) => handleOptionChange(qIndex, optIndex, "text", e.target.value)}
-                        className="w-full border p-2 rounded mt-2"
+                        className="w-full border p-2 rounded mt-2 text-white"
                       />
                     ) : (
                       <>
                         <input
                           type="file"
                           onChange={(e) => handleFileSelect(e.target.files[0], qIndex, "image", optIndex)}
-                          className="mt-2"
+                          className="mt-2 text-white"
                         />
+                        {opt.image && (<img
+                          src={opt.Image}
+                          alt="Preview"
+                          className="w-32 h-32 object-cover mt-2"
+                        />)}
                         {selectedFiles[`${qIndex}-opt-${optIndex}`] && (
                           <div className="mt-2">
                             <img
@@ -524,13 +597,13 @@ console.log(questions);
                     type="text"
                     value={q.correctOptions}
                     onChange={(e) => handleQuestionChange(qIndex, "correctOptions", e.target.value)}
-                    className="w-full border p-2 rounded"
+                    className="w-full border p-2 rounded text-white"
                   />
                 </>
               )}
 
               <label className="block mt-2 font-medium text-gray-500 mb-1">Bloom's Level</label>
-              <select className="w-full border p-3 rounded"
+              <select className="w-full border p-3 rounded text-white"
                 value={q.bloomLevel}
                 onChange={(e) => handleQuestionChange(qIndex, "bloomLevel", e.target.value)}
               >
@@ -548,7 +621,7 @@ console.log(questions);
                 type="number"
                 value={q.marks}
                 onChange={(e) => handleQuestionChange(qIndex, "marks", e.target.value)}
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-white"
               />
             </div>
           ))}
@@ -569,18 +642,22 @@ console.log(questions);
             </button>
 
 
-            <button
-              onClick={() => setQuestions([...questions, createEmptyQuestion("Subjective")])}
-              className="bg-blue-500 text-white px-3 py-3 rounded-lg shadow hover:bg-blue-600 transition"
-            >
-              Add More Question
-            </button>
+            <div className="flex justify-end mt-4">
+              <button
+                type="button"
+                onClick={handleAddQuestion}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow"
+              >
+                Add More
+              </button>
+            </div>
+
             <button
               type="button"
-               onClick={handleSave}
+              onClick={handleSave}
               className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-all"
             >
-              Save 
+              Save
             </button>
 
 

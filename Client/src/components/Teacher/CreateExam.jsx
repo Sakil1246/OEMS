@@ -7,7 +7,6 @@ import { format, parse } from "date-fns";
 const CreateExam = () => {
   const navigate = useNavigate();
 
-  // Initialize state with localStorage data
   const [examDetails, setExamDetails] = useState(() => {
     const savedExamDetails = JSON.parse(localStorage.getItem("examDetails"));
     return savedExamDetails || {

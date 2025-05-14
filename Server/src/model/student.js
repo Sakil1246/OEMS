@@ -16,7 +16,7 @@ const studentSchema = new mongoose.Schema({
   },{timestamps: true});
   studentSchema.methods.getJWT=async function(){
       const user=this;
-      const token=await jwt.sign({_id:user._id},"student@token",{expiresIn:"1d"});
+      const token=await jwt.sign({_id:user._id},process.env.STUDENT_TOKEN,{expiresIn:"1d"});
       return token;
   }
   
