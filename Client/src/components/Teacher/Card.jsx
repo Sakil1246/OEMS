@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { FaBell, FaTimes } from "react-icons/fa";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase"; 
+import { useDispatch } from "react-redux";
+import { pressTrigger } from "../../utils/teacher.notificationSlice";
 
 const Card = ({ icon, studentInfo, type, content, messageId, onDelete ,flag}) => {
     const [isOpen, setIsOpen] = useState(false);
-
+    const dispatch=useDispatch();
     const handleViewMessage = async () => {
         setIsOpen(true);
     
@@ -14,6 +16,7 @@ const Card = ({ icon, studentInfo, type, content, messageId, onDelete ,flag}) =>
             await updateDoc(messageRef, { flag: 1 });
             
             console.log("Flag updated to 1 for message", messageId);
+            dispatch(pressTrigger());
         } catch (err) {
             console.error("Failed to update flag:", err);
         }
@@ -23,8 +26,9 @@ const Card = ({ icon, studentInfo, type, content, messageId, onDelete ,flag}) =>
         try {
             const messageRef = doc(db, "messages", messageId);
             await deleteDoc(messageRef);
-            console.log(`Message ${messageId} deleted successfully`);
+            //console.log(`Message ${messageId} deleted successfully`);
             onDelete(messageId);
+            dispatch(pressTrigger());
         } catch (error) {
             console.error("Error deleting message:", error);
         }

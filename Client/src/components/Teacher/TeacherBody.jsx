@@ -16,20 +16,23 @@ const TeacherBody = () => {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 }
   };
+let trigger=useSelector((store) => store.teacherNotification.trigger);
+useEffect(() => {
+  if (!teacherId) return;
+  const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log("Messages:", messages);
+    
+    const notifications = messages.filter((message) => message.teacherId === teacherId);
+    setMessageList(messages.filter((message) => message.flag === 0 && message.teacherId === teacherId));
+    dispatch(addTeacherNotification(notifications));
+  });
 
+  return () => unsubscribe();
+}, [trigger]); 
 
-  useEffect(() => {
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const notifications = messages.filter((message) => message.teacherId === teacherId);
-      setMessageList(messages.filter((message) => message.flag === 0 && message.teacherId === teacherId));
-      dispatch(addTeacherNotification(notifications))
-    });
-
-    return () => unsubscribe();
-  }, []);
-  console.log(messageList);
+  //console.log(messageList);
   const Card = ({ title, icon, color, description, onClick, index }) => (
     <motion.div
       variants={cardVariant}

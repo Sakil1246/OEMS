@@ -7,7 +7,7 @@ import Card from "./Card";
 import { useSelector } from "react-redux";
 
 const TeacherNotifications = () => {
-    const notifications  = useSelector((store) => store.teacherNotification);
+    const notifications  = useSelector((store) => store.teacherNotification.notification);
     const [studentMap, setStudentMap] = useState({});
     const [selectedTab, setSelectedTab] = useState("unread"); 
 
@@ -34,12 +34,9 @@ const TeacherNotifications = () => {
 
    
     const handleDeleteMessage = (messageId) => {
-        
-        const updatedMessages = notifications.filter(msg => msg.id !== messageId);
-     
-        setSelectedTab("unread");
-        notifications.splice(0, notifications.length, ...updatedMessages);
-    };
+  setSelectedTab("unread"); 
+};
+
 
     return (
         <div className="min-h-screen px-6 py-10 bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center">

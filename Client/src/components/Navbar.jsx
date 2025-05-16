@@ -6,6 +6,7 @@ import { removeAdmin } from "../utils/adminSlice";
 import { removeStudent } from "../utils/studentSlice";
 import { removeTeacher } from "../utils/teacherSlice";
 import { useState } from "react";
+import { removeTeacherNotification } from "../utils/teacher.notificationSlice";
 
 const Navbar = () => {
   const admin = useSelector((store) => store.admin);
@@ -22,7 +23,9 @@ const Navbar = () => {
       await axios.post(`${Basic_URL}${status}/logout`, {}, { withCredentials: true });
       if (admin) dispatch(removeAdmin());
       else if (student) dispatch(removeStudent());
-      else if (teacher) dispatch(removeTeacher());
+      else if (teacher){ dispatch(removeTeacher());
+        dispatch(removeTeacherNotification());
+      }
       navigate("/");
     } catch (err) {
       console.log(err);
