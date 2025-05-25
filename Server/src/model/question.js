@@ -11,15 +11,21 @@ const questionSchema = new mongoose.Schema({
     }
   ],
   correctOptions: { 
-    type: Number, 
-    validate: {
-      validator: function(value) {
-        
-        return this.questionType === "MCQ" || this.questionType === "MSQ";
-      },
-      
-    }
+  type: Number,
+  required: function() {
+    return this.questionType === "MCQ" || this.questionType === "MSQ";
   },
+  validate: {
+    validator: function(value) {
+      if (this.questionType === "MCQ" || this.questionType === "MSQ") {
+        return typeof value === 'number';
+      }
+      return true; 
+    },
+    message: props => `${props.path} is invalid`
+  }
+}
+,
   bloomLevel: { type: String, required: true },
   questionType: { type: String, enum: ["MCQ", "MSQ", "Subjective"], required: true },  
   questionFormat: { type: String, enum: ["Image", "Text"], required: true },

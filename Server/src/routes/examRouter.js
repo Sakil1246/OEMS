@@ -20,8 +20,8 @@ router.post("/teacher/:examId/student/:studentId/finalize-evaluation", authTeach
 router.post("/teacher/update-results", authTeacher, examController.updateResults);
 router.get("/exam/:examId/batchmate-scores", authStudent, examController.getBatchmateScores);
 router.get('/teacher/:examId/student/:studentId/answers', authTeacher, examController.getStudentAnswers);
-router.post('teacher/updateexam/:id', authTeacher, examController.updateExam);
-//router.post('teacher/updatequestions/:id', authTeacher, examController.updateExamQuestions);
+router.post('/teacher/updateexam/:id', authTeacher, examController.updateExam);
+router.post('/teacher/updatequestions/:id', authTeacher, examController.updateExamQuestions);
 // Student routes
 router.get("/student/exam/list", authStudent, examController.listStudentExams);
 router.get("/student/exam/:examId/questions", authStudent, examController.getExamQuestions);

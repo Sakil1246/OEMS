@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Basic_URL } from '../../utils/constants';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { parse, format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 
@@ -12,7 +12,7 @@ const Editexampaper = () => {
   const [showInsertQuestion, setShowInsertQuestion] = useState(true);
   const [showNextButton, setShowNextButton] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+ const navigate = useNavigate();
 
   const createEmptyQuestion = (questionType = "Subjective") => ({
     questionType,
@@ -292,6 +292,7 @@ const Editexampaper = () => {
 
     localStorage.removeItem("questions");
     localStorage.removeItem("examDetails");
+    navigate(-1);
 
   } catch (error) {
     console.error("Error saving exam and questions:", error);
