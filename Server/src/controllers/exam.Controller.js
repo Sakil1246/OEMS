@@ -40,7 +40,6 @@ const uploadExamImage = async (req, res) => {
   }
 };
 
-// 2. Create exam (by teacher)
 const createExam = async (req, res) => {
   try {
     let {
@@ -86,7 +85,6 @@ const createExam = async (req, res) => {
   }
 };
 
-// 3. List exams for students
 const listStudentExams = async (req, res) => {
   try {
     const exams = await Exam.find({})
@@ -122,7 +120,6 @@ const listStudentExams = async (req, res) => {
   }
 };
 
-// 4. Get exam questions for student
 const getExamQuestions = async (req, res) => {
   try {
     const exam = await Exam.findById(req.params.examId).populate("questions");
@@ -133,7 +130,6 @@ const getExamQuestions = async (req, res) => {
   }
 };
 
-// 5. Submit exam answers (by student)
 const submitExamAnswers = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -156,7 +152,6 @@ const submitExamAnswers = async (req, res) => {
   }
 };
 
-// 6. Evaluate an answer (by teacher)
 const evaluateAnswer = async (req, res) => {
   try {
     const { answerId, marksObtained } = req.body;
@@ -171,7 +166,6 @@ const evaluateAnswer = async (req, res) => {
   }
 };
 
-// 7. Get exam list for teacher
 const teacherExamList = async (req, res) => {
   try {
     const { teacherId } = req.params;
@@ -182,7 +176,6 @@ const teacherExamList = async (req, res) => {
   }
 };
 
-// 8. Delete exam (by teacher)
 const deleteExam = async (req, res) => {
   try {
     const { id } = req.body;
@@ -197,7 +190,6 @@ const deleteExam = async (req, res) => {
   }
 };
 
-// 9. Get exam details (by teacher)
 const getExamById = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -212,7 +204,6 @@ const getExamById = async (req, res) => {
   }
 };
 
-// 10. Fetch questions for a teacher's exam
 const fetchTeacherExamQuestions = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -226,7 +217,6 @@ const fetchTeacherExamQuestions = async (req, res) => {
   }
 };
 
-// 11. Get count of submitted answers (by teacher)
 const getAnswersCount = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -242,7 +232,6 @@ const getAnswersCount = async (req, res) => {
   }
 };
 
-// 12. Get students who submitted answers (by teacher)
 const getSubmittedStudents = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -276,7 +265,6 @@ const getSubmittedStudents = async (req, res) => {
   }
 };
 
-// 13. Evaluate an answer with update (by teacher)
 const evaluateAnswerById = async (req, res) => {
   try {
     const { answerId } = req.params;
@@ -298,7 +286,6 @@ const evaluateAnswerById = async (req, res) => {
   }
 };
 
-// 14. Reset evaluation for a single answer (by teacher)
 const resetAnswerEvaluation = async (req, res) => {
   try {
     const { answerId } = req.params;
@@ -314,7 +301,6 @@ const resetAnswerEvaluation = async (req, res) => {
   }
 };
 
-// 15. Reset evaluation for all answers of a student in an exam (by teacher)
 const resetStudentEvaluation = async (req, res) => {
   try {
     const { examId, studentId } = req.params;
@@ -329,7 +315,6 @@ const resetStudentEvaluation = async (req, res) => {
   }
 };
 
-// 16. Finalize evaluation for a student (by teacher)
 const finalizeEvaluation = async (req, res) => {
   try {
     const { examId, studentId } = req.params;
@@ -366,7 +351,6 @@ const finalizeEvaluation = async (req, res) => {
   }
 };
 
-// 17. List attempted exams for a student
 const listAttemptedExams = async (req, res) => {
   try {
     const { studentId } = req.params;
@@ -400,7 +384,6 @@ const listAttemptedExams = async (req, res) => {
   }
 };
 
-// 18. Get detailed exam result for a student
 const getExamResultDetails = async (req, res) => {
   try {
     const studentId = req.student._id;
@@ -438,7 +421,6 @@ const getExamResultDetails = async (req, res) => {
   }
 };
 
-// 19. Update exam results (by teacher)
 const updateResults = async (req, res) => {
   try {
     const { examId, results } = req.body;
@@ -460,7 +442,7 @@ const updateResults = async (req, res) => {
   }
 };
 
-// 20. Get batchmate scores for an exam (by student)
+
 const getBatchmateScores = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -477,7 +459,7 @@ const getBatchmateScores = async (req, res) => {
   }
 };
 
-// 21. Placeholder for student exam message (to be implemented)
+
 const studentExamMessage = async (req, res) => {
   res.status(200).json({ message: 'Message functionality not implemented yet.' });
 };
