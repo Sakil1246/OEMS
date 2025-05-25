@@ -554,9 +554,10 @@ const updateExam=async (req,res)=>{
 }
 
 const updateExamQuestions = async (req, res) => {
-  const {id}=req.params;
+  const { id } = req.params;
   const { questions } = req.body;
-  try{
+
+  try {
     if (!Array.isArray(questions) || questions.length === 0) {
       return res.status(400).json({ error: "At least one question must be provided." });
     }
@@ -566,23 +567,35 @@ const updateExamQuestions = async (req, res) => {
       return res.status(404).json({ message: "Exam not found." });
     }
 
-    const questionsWithTeacher = questions.map(q => ({
-      ...q,
-      createdBy: req.teacher._id,
-    }));
+    const newQuestionIds = [];
 
-    const savedQuestions = await Question.insertMany(questionsWithTeacher);
-    exam.questions.push(...savedQuestions.map(q => q._id));
+    // Process each question
+    for (const question of questions) {
+      question.createdBy = req.teacher._id;
+
+      if (question._id) {
+        // Update existing question
+        await Question.findByIdAndUpdate(question._id, question, { new: true, runValidators: true });
+        newQuestionIds.push(question._id); // keep it
+      } else {
+        // Insert new question
+        const newQ = new Question(question);
+        await newQ.save();
+        newQuestionIds.push(newQ._id); // add new id
+      }
+    }
+
+    // Update exam's questions array
+    exam.questions = newQuestionIds;
     await exam.save();
 
     res.status(200).json({ message: "Questions updated successfully", examId: exam._id });
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error updating exam questions:", error);
-    console.error(error.stack);
     res.status(500).json({ message: "Server error while updating exam questions." });
-}
-}
+  }
+};
+
 
 module.exports = {
   uploadExamImage,
