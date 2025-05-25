@@ -519,6 +519,41 @@ const getStudentAnswers= async (req, res) => {
 };
 
 
+const updateExam=async (req,res)=>{
+  const {id}=req.params;
+ const {department,
+    semester,
+    examName,
+    startTime,
+    duration,
+    subjectName,
+    totalMarks,
+    passingMarks,
+    aboutExam} = req.body;
+  try {
+    const updateExamDetails=await Exam.findByIdAndUpdate(id,{
+      department,
+      semester,
+      examName,
+      startTime,
+      duration,
+      subjectName,
+      totalMarks,
+      passingMarks,
+      about:aboutExam
+    },{new:true});
+    if(!updateExamDetails){
+      return res.status(404).json({message:"Exam not found"});
+    }
+    res.status(200).json({message:"Exam updated successfully",data:updateExamDetails});
+  }
+  catch (error) {
+    console.error("Error updating exam:", error);
+    res.status(500).json({ message: "Server error while updating exam." });
+  }
+}
+
+
 
 module.exports = {
   uploadExamImage,
@@ -544,4 +579,5 @@ module.exports = {
   getBatchmateScores,
   studentExamMessage,
   getStudentAnswers,
+  updateExam,
 };

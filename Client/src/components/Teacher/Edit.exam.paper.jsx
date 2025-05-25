@@ -250,10 +250,9 @@ const Editexampaper = () => {
 
   
   const handleSave = async () => {
-  setErrorMessage(""); // Reset error message
+  setErrorMessage(""); 
 
   try {
-    // Validate required exam fields
     const requiredFields = ['department', 'semester', 'examName', 'startTime', 'duration', 'subjectName', 'totalMarks'];
     const newErrors = {};
 
@@ -268,34 +267,29 @@ const Editexampaper = () => {
       return;
     }
 
-    // Upload all selected files before saving questions
     const fileUploadPromises = Object.keys(selectedFiles).map(async (fileKey) => {
       const [qIndexStr, part] = fileKey.split("-");
       const qIndex = parseInt(qIndexStr, 10);
       const optIndex = part?.startsWith("opt") ? parseInt(part.split("opt-")[1], 10) : null;
-      const field = "image"; // Since your system supports only images as files for now
+      const field = "image"; 
 
       await handleFileUpload(qIndex, field, optIndex);
     });
 
     await Promise.all(fileUploadPromises);
 
-    // Update Exam Details
-    await axios.put(`${Basic_URL}teacher/updateexam/${id}`, examDetails, {
+    await axios.post(`${Basic_URL}teacher/updateexam/${id}`, examDetails, {
       withCredentials: true,
     });
 
-    // Update Questions
-    await axios.put(`${Basic_URL}teacher/updatequestions/${id}`, {
+    await axios.post(`${Basic_URL}teacher/updatequestions/${id}`, {
       questions,
     }, {
       withCredentials: true,
     });
 
-    // Notify success
     alert("Exam and questions saved successfully!");
 
-    // Optionally clear local storage
     localStorage.removeItem("questions");
     localStorage.removeItem("examDetails");
 
@@ -308,7 +302,7 @@ const Editexampaper = () => {
 
 
 const handleAddQuestion = () => {
-  const newQuestion = createEmptyQuestion("Subjective"); // Or default type
+  const newQuestion = createEmptyQuestion("Subjective"); 
   setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
 };
 
@@ -332,7 +326,6 @@ const handleAddQuestion = () => {
             {errors.department && <p className="text-red-500 text-sm">{errors.department}</p>}
           </div>
 
-          {/* Semester */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Semester <span className="text-red-500">*</span>
@@ -347,7 +340,6 @@ const handleAddQuestion = () => {
             {errors.semester && <p className="text-red-500 text-sm">{errors.semester}</p>}
           </div>
 
-          {/* Exam Name */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Exam Name <span className="text-red-500">*</span>
@@ -362,7 +354,6 @@ const handleAddQuestion = () => {
             {errors.examName && <p className="text-red-500 text-sm">{errors.examName}</p>}
           </div>
 
-          {/* Start Time */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Start Time <span className="text-red-500">*</span>
@@ -384,7 +375,6 @@ const handleAddQuestion = () => {
             {errors.startTime && <p className="text-red-500 text-sm">{errors.startTime}</p>}
           </div>
 
-          {/* Duration */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Duration (minutes) <span className="text-red-500">*</span>
@@ -399,7 +389,6 @@ const handleAddQuestion = () => {
             {errors.duration && <p className="text-red-500 text-sm">{errors.duration}</p>}
           </div>
 
-          {/* Subject Name */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Subject Name <span className="text-red-500">*</span>
@@ -414,7 +403,6 @@ const handleAddQuestion = () => {
             {errors.subjectName && <p className="text-red-500 text-sm">{errors.subjectName}</p>}
           </div>
 
-          {/* Total Marks */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Total Marks <span className="text-red-500">*</span>
@@ -429,7 +417,6 @@ const handleAddQuestion = () => {
             {errors.totalMarks && <p className="text-red-500 text-sm">{errors.totalMarks}</p>}
           </div>
 
-          {/* Passing Marks */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">
               Passing Marks (optional)
@@ -443,7 +430,6 @@ const handleAddQuestion = () => {
             />
           </div>
 
-          {/* About Exam */}
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 mb-1">About Exam (optional)</label>
             <textarea
@@ -453,12 +439,10 @@ const handleAddQuestion = () => {
               className="w-full p-3 bg-[#0F0F24] text-slate-100 text-lg rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             ></textarea>
           </div>
-          {/* Questions */}
           {questions.map((q, qIndex) => (
             <div key={qIndex} className="mb-6 border p-4 rounded-lg bg-green-50">
               <label className="block text-lg font-medium text-gray-800 mb-1">Question {qIndex + 1}</label>
 
-              {/* Question Type */}
               <label className="block  font-medium text-gray-500 mb-1">Question Type</label>
               <select
                 value={q.questionType}
@@ -631,7 +615,8 @@ const handleAddQuestion = () => {
               <span className="block sm:inline">{errorMessage}</span>
             </div>
           )}
-          {/* Buttons */}
+
+
           <div className="flex justify-between mt-6">
             <button
               type="button"
